@@ -65,7 +65,7 @@ const ReviewForm = ({ onSubmit, className = '' }) => {
           date: new Date().toISOString()
         });
       } else {
-        // Simulate API call
+     
         await new Promise(resolve => setTimeout(resolve, 1500));
       }
       
