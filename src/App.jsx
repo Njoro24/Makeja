@@ -1,34 +1,51 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import FAQ from './pages/FAQ'
+import NotFound from './pages/NotFound'
+
+
+import ReviewForm from './components/reviews/ReviewForm'
+import ReviewList from './components/reviews/ReviewList'
+import StarRating from './components/reviews/StarRating'
+
+import Alert from './components/common/Alert'
+import LoadingSpinner from './components/common/LoadingSpinner'
+
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <Router>
+      <div className="min-h-screen bg-gray-50 text-gray-900 p-6">
+        
+
+        <Routes>
+          <Route path="/" element={<FAQ />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+
+        <section className="my-10 space-y-8">
+          <div>
+            <h2 className="text-2xl font-semibold mb-3">Star Rating</h2>
+            <StarRating rating={4} />
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-semibold mb-3">Submit a Review</h2>
+            <ReviewForm />
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-semibold mb-3">Reviews</h2>
+            <ReviewList />
+          </div>
+
+          <div className="flex items-center gap-6">
+            <Alert type="success" message="Operation completed successfully." />
+            <LoadingSpinner />
+          </div>
+        </section>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </Router>
   )
 }
 
