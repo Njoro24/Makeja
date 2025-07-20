@@ -1,26 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState, useContext } from "react";
+import { getUserBookings } from "../../services/booking";
+import { BookingContext } from "../../context/BookingContext";
+import BookingCard from "./BookingCard";
 
 const BookingHistory = () => {
-  const bookings = [
-    { hostel: 'Hostel A', date: 'Jan 2024' },
-    { hostel: 'Hostel B', date: 'Feb 2024' },
-  ];
+  const [bookings, setBookings] = useState([]);
+  const { user } = useContext(BookingContext);
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      const data = await getUserBookings(user.id);
+      setBookings(data);
+    };
+    fetchBookings();
+  }, [user.id]);
 
   return (
-    <section className="card">
-      <h2 className="text-heading mb-4">Your Booking History</h2>
-      <ul className="space-y-3">
-        {bookings.map((booking, index) => (
-          <li
-            key={index}
-            className="p-3 bg-purple-50 rounded-lg flex justify-between items-center shadow-sm"
-          >
-            <span className="font-medium text-purple-700">{booking.hostel}</span>
-            <span className="text-sm text-gray-500">{booking.date}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">Your Bookings</h2>
+      {bookings.length === 0 ? (
+        <p>You have no past bookings.</p>
+      ) : (
+        <div className="space-y-4">
+          {bookings.map((booking) => (
+            <BookingCard key={booking.id} booking={booking} />
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 
