@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { ChevronUp, ChevronDown, MessageCircle } from 'lucide-react';
 import PropTypes from 'prop-types';
 
-const FAQ = ({ 
+const FAQ = ({
   faqData = [],
-  title = "Frequently Asked Questions",
-  subtitle = "Find answers to common questions about our platform",
+  title = "Student Hostels FAQ",
+  subtitle = "Everything you need to know about booking and living in our hostels",
   onContactSupport,
   className = ''
 }) => {
@@ -14,28 +14,28 @@ const FAQ = ({
   const defaultFaqData = [
     {
       id: 1,
-      question: "How do I get started with the platform?",
-      answer: "Getting started is easy! Simply create an account, complete your profile, and you'll have access to all features. Our onboarding guide will walk you through the key features to help you get the most out of the platform."
+      question: "How do I book a room in a hostel?",
+      answer: "To book a room, sign up and complete your profile. Browse available hostels and click 'Book Now' to reserve your spot. You'll receive a confirmation via email."
     },
     {
       id: 2,
-      question: "What payment methods do you accept?",
-      answer: "We accept all major credit cards (Visa, MasterCard, American Express), PayPal, and bank transfers. All payments are processed securely through our encrypted payment system."
+      question: "What documents do I need for booking?",
+      answer: "You typically need a student ID or admission letter and a valid national ID. Each hostel might have specific requirements listed on their page."
     },
     {
       id: 3,
-      question: "Can I cancel my subscription anytime?",
-      answer: "Yes, you can cancel your subscription at any time from your account settings. Your access will continue until the end of your current billing period, and you won't be charged for the following period."
+      question: "Can I cancel or change my booking?",
+      answer: "Yes. You can cancel or modify your booking from your dashboard. Refunds depend on the hostel’s cancellation policy, so please check before booking."
     },
     {
       id: 4,
-      question: "Do you offer customer support?",
-      answer: "Absolutely! We provide 24/7 customer support through live chat, email, and phone. Our support team is always ready to help you with any questions or issues you might have."
+      question: "Are utilities and Wi-Fi included in the rent?",
+      answer: "Most hostels include water, electricity, and Wi-Fi in the rent. Details can be found on each hostel’s listing page."
     },
     {
       id: 5,
-      question: "Is my data secure?",
-      answer: "Data security is our top priority. We use enterprise-grade encryption, regular security audits, and comply with all major data protection regulations including GDPR and CCPA to ensure your information is safe."
+      question: "Is there a curfew in hostels?",
+      answer: "Some hostels have curfews for security reasons, while others offer 24/7 access. Check the 'House Rules' section of the hostel listing for details."
     }
   ];
 
@@ -64,51 +64,44 @@ const FAQ = ({
     if (onContactSupport) {
       onContactSupport();
     } else {
-     
       console.log('Contact support clicked');
     }
   };
 
   return (
     <div className={`max-w-4xl mx-auto p-6 ${className}`}>
-      {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">{title}</h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">{subtitle}</p>
+        <h1 className="text-3xl font-bold text-white mb-4">{title}</h1>
+        <p className="text-lg text-gray-300 max-w-2xl mx-auto">{subtitle}</p>
       </div>
 
-    
       <div className="space-y-4">
         {questions.map(({ id, question, answer }) => (
           <div
             key={id}
-            className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transition-shadow hover:shadow-md"
+            className="bg-[#1f1f1f] rounded-xl shadow-md border border-gray-700 overflow-hidden"
           >
             <button
               onClick={() => toggleItem(id)}
               onKeyDown={(e) => handleKeyDown(e, id)}
-              className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
+              className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-[#2a2a2a] focus:outline-none focus:ring-2 focus:ring-blue-500"
               aria-expanded={openItems.has(id)}
               aria-controls={`faq-answer-${id}`}
             >
-              <h3 className="font-semibold text-gray-900 pr-4 flex-1">
+              <h3 className="font-semibold text-white pr-4 flex-1">
                 {question}
               </h3>
-              <div className="flex-shrink-0">
-                {openItems.has(id) ? (
-                  <ChevronUp className="w-5 h-5 text-gray-500 transition-transform" />
-                ) : (
-                  <ChevronDown className="w-5 h-5 text-gray-500 transition-transform" />
-                )}
+              <div className="flex-shrink-0 text-gray-400">
+                {openItems.has(id) ? <ChevronUp /> : <ChevronDown />}
               </div>
             </button>
-            
+
             {openItems.has(id) && (
-              <div 
+              <div
                 id={`faq-answer-${id}`}
-                className="px-6 pb-4 border-t border-gray-100 animate-fadeIn"
+                className="px-6 pb-4 border-t border-gray-700 bg-[#252525]"
               >
-                <p className="text-gray-700 pt-4 leading-relaxed">
+                <p className="text-gray-300 pt-4 leading-relaxed">
                   {answer}
                 </p>
               </div>
@@ -117,16 +110,15 @@ const FAQ = ({
         ))}
       </div>
 
-      
-      <div className="mt-12 text-center bg-gray-50 rounded-lg p-8">
-        <MessageCircle className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+      <div className="mt-12 text-center bg-[#111111] rounded-lg p-8 border border-gray-800">
+        <MessageCircle className="w-12 h-12 text-blue-500 mx-auto mb-4" />
+        <h3 className="text-lg font-semibold text-white mb-2">
           Still have questions?
         </h3>
-        <p className="text-gray-600 mb-6">
-          Can't find what you're looking for? Our support team is here to help.
+        <p className="text-gray-400 mb-6">
+          Can’t find what you’re looking for? Our support team is here to help.
         </p>
-        <button 
+        <button
           onClick={handleContactSupport}
           className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
