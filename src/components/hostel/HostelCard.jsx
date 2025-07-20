@@ -1,17 +1,17 @@
+
 import React from 'react';
 
-const HostelCard = ({ hostel, onClick }) => {
+const HostelCard = ({ hostel }) => {
   return (
-    <div className="rounded-2xl shadow-lg overflow-hidden bg-white w-full max-w-sm m-4 cursor-pointer" onClick={onClick}>
+    <div className="bg-white shadow-md rounded-xl p-4 max-w-sm w-full">
       <img
         src={hostel.image}
         alt={hostel.name}
-        className="w-full h-48 object-cover"
+        className="w-full h-48 object-cover rounded-lg mb-4"
       />
-      <div className="p-4">
-        <h2 className="text-xl font-bold text-gray-800 mb-2">{hostel.name}</h2>
-        <p className="text-gray-600">{hostel.location}</p>
-      </div>
+      <div className="text-lg font-semibold text-gray-800">{hostel.name}</div>
+      <p className="text-sm text-gray-600">{hostel.location}</p>
+      <div className="mt-2 text-sm text-gray-800">Ksh {hostel.price} / month</div>
     </div>
   );
 };
