@@ -1,22 +1,12 @@
-import React from 'react';
+import React from "react";
 
-const HostelImages = () => {
+const HostelImages = ({ images, name }) => {
   return (
-    <section className="card">
-      <h2 className="text-heading mb-4">Hostel Images</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        {[...Array(6)].map((_, i) => (
-          <div
-            key={i}
-            className="bg-purple-100 h-32 rounded-lg shadow-sm hover:shadow-md transition duration-200"
-          >
-            <div className="flex items-center justify-center h-full text-purple-400 font-medium">
-              Image {i + 1}
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
+    <img
+      src={images[0]} // Use first image as preview
+      alt={`${name} preview`}
+      className="w-full h-52 object-cover rounded-md border border-gray-700"
+    />
   );
 };
 
