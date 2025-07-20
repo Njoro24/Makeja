@@ -1,25 +1,26 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import BookingConfirmation from './components/BookingConfirmation';
-import BookingHistory from './components/BookingHistory';
-import RoomSelector from './components/RoomSelector';
-import HostelList from './components/HostelList';
-import HostelDetails from './components/HostelDetails';
-import Navbar from './components/Navbar';
-
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import BookingConfirmation from "./components/booking/BookingConfirmation";
+import BookingHistory from "./components/booking/BookingHistory";
+import RoomSelector from "./components/booking/RoomSelector";
+import HostelDetails from "./components/hostel/HostelDetails";
+import HostelImages from "./components/hostel/HostelImages";
+import HostelAmenities from "./components/hostel/HostelAmenities";
+import HostelReviews from "./components/hostel/HostelReviews";
+import NotFound from "./components/common/NotFound"; 
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-100 text-gray-900">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<RoomSelector />} />
-          <Route path="/booking/confirmation" element={<BookingConfirmation />} />
-          <Route path="/booking/history" element={<BookingHistory />} />
-          <Route path="/hostels" element={<HostelList />} />
-          <Route path="/hostels/:id" element={<HostelDetails />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/booking/confirmation" element={<BookingConfirmation />} />
+        <Route path="/booking/history" element={<BookingHistory />} />
+        <Route path="/booking/room-selector" element={<RoomSelector />} />
+        <Route path="/hostel/details" element={<HostelDetails />} />
+        <Route path="/hostel/images" element={<HostelImages />} />
+        <Route path="/hostel/amenities" element={<HostelAmenities />} />
+        <Route path="/hostel/reviews" element={<HostelReviews />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </Router>
   );
 }
