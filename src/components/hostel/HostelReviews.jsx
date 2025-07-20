@@ -1,27 +1,22 @@
-import React, { useState } from "react";
+import React from 'react';
 
 const HostelReviews = ({ reviews }) => {
-  const [index, setIndex] = useState(0);
-
-  const handleNext = () => setIndex((index + 1) % reviews.length);
-  const handlePrev = () => setIndex((index - 1 + reviews.length) % reviews.length);
-
   return (
-    <div className="mt-4 w-full">
-      <div className="flex justify-between items-center">
-        <button onClick={handlePrev} className="text-gray-400 hover:text-white">◀</button>
-        <div className="text-center text-sm">
-          <div className="flex justify-center">
-            <img
-              src={reviews[index].avatar}
-              alt="Reviewer"
-              className="h-12 w-12 rounded-full object-cover border border-gray-600"
-            />
+    <div className="max-w-4xl mx-auto mt-8">
+      <h2 className="text-2xl font-semibold text-purple-800 mb-4">Reviews</h2>
+      <div className="space-y-4">
+        {reviews.map((r, i) => (
+          <div
+            key={i}
+            className="p-4 bg-white rounded-lg shadow-sm flex flex-col"
+          >
+            <div className="flex justify-between items-center mb-2">
+              <span className="font-semibold text-gray-800">{r.name}</span>
+              <span className="text-yellow-500 font-semibold">{r.rating}★</span>
+            </div>
+            <p className="text-gray-600">{r.comment}</p>
           </div>
-          <p className="italic mt-2">"{reviews[index].comment}"</p>
-          <p className="text-yellow-400">{"⭐️".repeat(reviews[index].rating)}</p>
-        </div>
-        <button onClick={handleNext} className="text-gray-400 hover:text-white">▶</button>
+        ))}
       </div>
     </div>
   );
