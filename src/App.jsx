@@ -1,52 +1,25 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import FAQ from './pages/FAQ'
-import NotFound from './pages/NotFound'
-
-import ReviewForm from './components/reviews/ReviewForm'
-import ReviewList from './components/reviews/ReviewList'
-import StarRating from './components/reviews/StarRating'
-
-import Alert from './components/common/Alert'
-import LoadingSpinner from './components/common/LoadingSpinner'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import FAQ from './pages/FAQ';
+import NotFound from './pages/NotFound';
+import ReviewForm from './components/reviews/ReviewForm';
+import ReviewList from './components/reviews/ReviewList';
+import ReviewCard from './components/reviews/ReviewCard';
 
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-[#1E1E2F] text-white px-4 py-8 font-sans">
+      <div className="min-h-screen bg-[#1E1E2F] text-white font-sans">
         <Routes>
           <Route path="/" element={<FAQ />} />
           <Route path="/faq" element={<FAQ />} />
+          <Route path="/reviewform" element={<ReviewForm />} />
+          <Route path="/reviewlist" element={<ReviewList />} />
+          <Route path="/reviewcard" element={<ReviewCard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-
-        <section className="my-10 space-y-12 max-w-3xl mx-auto">
-          <div>
-            <h2 className="text-2xl font-semibold mb-4">Star Rating</h2>
-            <StarRating rating={4} />
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-semibold mb-4">Submit a Review</h2>
-            <div className="bg-[#2A2A40] p-6 rounded-xl shadow-md">
-              <ReviewForm />
-            </div>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-semibold mb-4">Reviews</h2>
-            <div className="bg-[#2A2A40] p-6 rounded-xl shadow-md">
-              <ReviewList />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-6 mt-12">
-            <Alert type="success" message="Operation completed successfully." />
-            <LoadingSpinner />
-          </div>
-        </section>
       </div>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;
