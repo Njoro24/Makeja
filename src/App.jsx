@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+
 import FAQ from './pages/FAQ'
 import NotFound from './pages/NotFound'
 
@@ -9,16 +10,25 @@ import StarRating from './components/reviews/StarRating'
 import Alert from './components/common/Alert'
 import LoadingSpinner from './components/common/LoadingSpinner'
 
+import BookingPage from './pages/BookingPage'
+import LoginPage from './pages/LoginPage.jsx'
+import PaymentPage from './pages/PaymentPage.jsx'
+import PaymentSuccess from './components/payment/PaymentSuccess.jsx'
+
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-[#1E1E2F] text-white px-4 py-8 font-sans">
-        <Routes>
-          <Route path="/" element={<FAQ />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+      <Routes>
+        <Route path="/" element={<FAQ />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/booking" element={<BookingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
 
+      <div className="min-h-screen bg-[#1E1E2F] text-white px-4 py-8 font-sans">
         <section className="my-10 space-y-12 max-w-3xl mx-auto">
           <div>
             <h2 className="text-2xl font-semibold mb-4">Star Rating</h2>
