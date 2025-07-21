@@ -23,7 +23,11 @@ export default function DatePicker({
 
   return (
     <div className="mb-4">
-      {label && <label className="block mb-2 text-sm font-medium text-gray-300">{label}</label>}
+      {label && (
+        <label className="block mb-2 text-sm font-medium text-gray-300">
+          {label}
+        </label>
+      )}
       <ReactDatePicker
         selected={startDate}
         onChange={handleChange}
@@ -31,7 +35,13 @@ export default function DatePicker({
         minDate={minDate}
         excludeDates={blockedDates}
         placeholderText={placeholder}
-        className="w-full px-4 py-2 bg-zinc-800 text-white border border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full px-4 py-3 bg-gray-800 text-white border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 shadow-sm transition duration-150"
+        calendarClassName="bg-gray-900 text-white border border-gray-700 rounded-lg shadow-lg"
+        dayClassName={(date) =>
+          blockedDates.find(d => d.toDateString() === date.toDateString())
+            ? 'text-gray-500 line-through cursor-not-allowed'
+            : 'hover:bg-blue-600 hover:text-white transition rounded-full'
+        }
       />
     </div>
   )
