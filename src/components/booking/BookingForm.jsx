@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import DatePicker from '../booking/DatePicker' 
+import DatePicker from '../booking/DatePicker'
 import { useBooking } from '../../hooks/useBooking'
+import toast from 'react-hot-toast'
 
-// Hardcoded for now — should eventually come from backen
 const unavailableDates = [
   new Date('2025-07-20'),
   new Date('2025-07-22'),
@@ -18,19 +18,25 @@ const BookingForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    if (!checkIn || !checkOut || checkOut <= checkIn) {
-      alert("Please select a valid date range.")
+    if (!checkIn || !checkOut) {
+      toast.error("Both dates are required.")
+      return
+    }
+
+    if (checkOut <= checkIn) {
+      toast.error("Check-out must be after check-in.")
       return
     }
 
     saveBooking({ checkIn, checkOut, guests })
+    toast.success("Booking saved!")
   }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center p-4">
       <form
         onSubmit={handleSubmit}
-        className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md space-y-6"
+        className="bg-gray-800 p-8 rounded-2xl shadow-xl w-full max-w-md space-y-6 transition-all"
       >
         <h2 className="text-2xl font-bold text-center">Book Your Stay</h2>
 
@@ -53,19 +59,19 @@ const BookingForm = () => {
         />
 
         <div className="flex flex-col space-y-2">
-          <label className="text-sm">Number of Guests</label>
+          <label className="text-sm text-gray-300">Number of Guests</label>
           <input
             type="number"
             min={1}
             value={guests}
             onChange={(e) => setGuests(parseInt(e.target.value))}
-            className="p-3 rounded bg-gray-700 text-white"
+            className="p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
           />
         </div>
 
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded font-semibold"
+          className="w-full bg-blue-600 hover:bg-blue-700 active:scale-95 py-3 rounded-lg font-semibold transition transform duration-150"
         >
           Save Booking Details
         </button>
