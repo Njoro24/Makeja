@@ -11,7 +11,7 @@ const dummyUser = {
   preference: "Single Room",
   hostel: "Qwetu Hostel",
   roomNumber: "135",
-  profilePicture: "", // can be updated
+  profilePicture: "", 
 };
 
 const ProfilePage = () => {
