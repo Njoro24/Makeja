@@ -1,4 +1,4 @@
-// src/utils/formatters.js
+
 
 export const formatCurrency = (amount, currency = 'KES') => {
   return new Intl.NumberFormat('en-KE', {

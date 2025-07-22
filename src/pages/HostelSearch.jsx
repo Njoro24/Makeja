@@ -1,4 +1,4 @@
-// src/pages/HostelSearch.jsx
+
 
 import React, { useState, useEffect } from 'react';
 import HostelList from '../components/hostel/HostelList';
