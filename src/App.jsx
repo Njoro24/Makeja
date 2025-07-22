@@ -1,11 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+import Navigation from '@/components/common/Navigation';
+import HostelList from '@/components/hostel/HostelList';
+import HostelDetail from '@/pages/HostelDetail';
+
 import ProfilePage from './pages/ProfilePage';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Footer from './components/common/Footer';
-
 import FAQ from './pages/FAQ';
 import NotFound from './pages/NotFound';
 import ReviewForm from './components/reviews/ReviewForm';
@@ -22,9 +25,12 @@ function App() {
   return (
     <Router>
       <div className="flex flex-col min-h-screen bg-[#1E1E2F] text-white font-sans">
-        <div className="flex-grow">
+        <Navigation />
+        <div className="flex-grow p-4">
           <Routes>
-            <Route path="/" element={<ProfilePage />} />
+            <Route path="/" element={<HostelList />} />
+            <Route path="/hostels/:id" element={<HostelDetail />} />
+            <Route path="/profile" element={<ProfilePage />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/faq" element={<FAQ />} />
@@ -35,7 +41,6 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
 
-          {/* Optional Review Section */}
           <section className="my-10 space-y-12 max-w-3xl mx-auto px-4 py-8">
             <div>
               <h2 className="text-2xl font-semibold mb-4">Star Rating</h2>
@@ -62,7 +67,6 @@ function App() {
             </div>
           </section>
         </div>
-
         <Footer />
       </div>
     </Router>
