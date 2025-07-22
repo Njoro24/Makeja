@@ -9,7 +9,7 @@ const unavailableDates = [
   new Date('2025-07-25'),
 ]
 
-const BookingForm = () => {
+const BookingForm = ({ roomId }) => {
   const { saveBooking } = useBooking()
   const [checkIn, setCheckIn] = useState(null)
   const [checkOut, setCheckOut] = useState(null)
@@ -28,8 +28,12 @@ const BookingForm = () => {
       return
     }
 
-    saveBooking({ checkIn, checkOut, guests })
-    toast.success("Booking saved!")
+    if (!roomId) {
+      toast.error("Room ID is missing.")
+      return
+    }
+
+    saveBooking({ checkIn, checkOut, guests, roomId })
   }
 
   return (
