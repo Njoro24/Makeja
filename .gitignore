@@ -73,3 +73,5 @@ webpack-stats.json
 .rts2_cache_umd/
 .stylelintcache
 .svelte-kit
+node_modules/
+.vite/
