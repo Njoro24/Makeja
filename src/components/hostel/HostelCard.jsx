@@ -1,25 +1,40 @@
 // src/components/hostel/HostelCard.jsx
-import React from 'react';
 
-const HostelCard = ({ hostel, onClick }) => {
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { formatCurrency } from '../../utils/formatters';
+// import placeholderImage from '../../assets/images/placeholders/hostel-placeholder.jpg';
+
+const HostelCard = ({ hostel }) => {
+  const {
+    id,
+    name,
+    location,
+    pricePerNight,
+    imageUrl,
+    rating,
+  } = hostel;
+
   return (
-    <div
-      className="bg-white border border-navy rounded-2xl shadow hover:shadow-lg transition p-4 cursor-pointer"
-      onClick={() => onClick(hostel.id)}
-    >
+    <Link to={`/hostels/${id}`} className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-200">
       <img
-        src={hostel.image || '/images/placeholder-hostel.jpg'}
-        alt={hostel.name}
-        className="w-full h-40 object-cover rounded-xl mb-4"
+        src={imageUrl || placeholderImage}
+        alt={name}
+        className="h-48 w-full object-cover"
       />
-      <h3 className="text-xl font-semibold text-navy">{hostel.name}</h3>
-      <p className="text-sm text-gray-600">{hostel.location}</p>
-      <p className="text-navy font-medium mt-2">Ksh {hostel.price} / month</p>
-      <div className="mt-2 text-sm text-gray-500">
-        {hostel.amenities?.slice(0, 3).join(', ')}
-        {hostel.amenities?.length > 3 && '...'}
+
+      <div className="p-4">
+        <h3 className="text-lg font-semibold text-primary">{name}</h3>
+        <p className="text-sm text-gray-600">{location}</p>
+        
+        <div className="mt-2 flex justify-between items-center">
+          <span className="text-base text-primary font-bold">{formatCurrency(pricePerNight)} / night</span>
+          {rating && (
+            <span className="text-sm text-yellow-500">⭐ {rating.toFixed(1)}</span>
+          )}
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

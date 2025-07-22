@@ -1,72 +1,51 @@
 // src/components/hostel/HostelFilters.jsx
+
 import React, { useState } from 'react';
+import Button from '../common/Button';
 
 const HostelFilters = ({ onFilter }) => {
   const [location, setLocation] = useState('');
-  const [price, setPrice] = useState('');
-  const [amenities, setAmenities] = useState([]);
-
-  const handleAmenityChange = (e) => {
-    const { value, checked } = e.target;
-    if (checked) {
-      setAmenities([...amenities, value]);
-    } else {
-      setAmenities(amenities.filter((a) => a !== value));
-    }
-  };
+  const [maxPrice, setMaxPrice] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onFilter({ location, price: Number(price), amenities });
+    onFilter({ location, maxPrice: Number(maxPrice) });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-4 rounded-lg shadow-md border border-navy">
-      <div className="mb-4">
-        <label className="block text-navy font-medium mb-1">Location</label>
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white shadow-sm rounded-lg p-4 mb-6 flex flex-col md:flex-row gap-4 items-end"
+    >
+      <div className="flex-1">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Location
+        </label>
         <input
           type="text"
-          className="w-full border border-gray-300 rounded px-3 py-2"
+          placeholder="e.g., Nairobi"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          placeholder="e.g., Nairobi"
+          className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
 
-      <div className="mb-4">
-        <label className="block text-navy font-medium mb-1">Max Price (Ksh)</label>
+      <div className="flex-1">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Max Price (Ksh)
+        </label>
         <input
           type="number"
-          className="w-full border border-gray-300 rounded px-3 py-2"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          placeholder="e.g., 15000"
+          placeholder="e.g., 5000"
+          value={maxPrice}
+          onChange={(e) => setMaxPrice(e.target.value)}
+          className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
 
-      <div className="mb-4">
-        <label className="block text-navy font-medium mb-1">Amenities</label>
-        <div className="flex flex-wrap gap-3">
-          {['WiFi', 'Laundry', 'Cafeteria', 'Security'].map((item) => (
-            <label key={item} className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                value={item}
-                checked={amenities.includes(item)}
-                onChange={handleAmenityChange}
-              />
-              {item}
-            </label>
-          ))}
-        </div>
-      </div>
-
-      <button
-        type="submit"
-        className="bg-navy text-white px-4 py-2 rounded hover:bg-navy/90 transition"
-      >
+      <Button type="submit" variant="primary" className="w-full md:w-auto">
         Apply Filters
-      </button>
+      </Button>
     </form>
   );
 };

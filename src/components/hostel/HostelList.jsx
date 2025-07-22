@@ -1,22 +1,22 @@
 // src/components/hostel/HostelList.jsx
+
 import React from 'react';
 import HostelCard from './HostelCard';
 
 const HostelList = ({ hostels }) => {
-  const handleHostelClick = (id) => {
-    // Future: Navigate to hostel details page
-    console.log('Selected hostel ID:', id);
-  };
+  if (!hostels || hostels.length === 0) {
+    return (
+      <p className="text-center text-gray-500 mt-8">
+        No hostels found. Try adjusting your filters.
+      </p>
+    );
+  }
 
   return (
-    <div className="grid gap-4">
-      {hostels.length === 0 ? (
-        <p className="text-navy">No hostels match your criteria.</p>
-      ) : (
-        hostels.map((hostel) => (
-          <HostelCard key={hostel.id} hostel={hostel} onClick={handleHostelClick} />
-        ))
-      )}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+      {hostels.map((hostel) => (
+        <HostelCard key={hostel.id} hostel={hostel} />
+      ))}
     </div>
   );
 };

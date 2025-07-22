@@ -1,43 +1,57 @@
 // src/pages/HostelSearch.jsx
+
 import React, { useState, useEffect } from 'react';
-import HostelFilters from '../components/hostel/HostelFilters';
 import HostelList from '../components/hostel/HostelList';
+import HostelFilters from '../components/hostel/HostelFilters';
 import HostelMap from '../components/hostel/HostelMap';
+import useApi from '../hooks/useApi';
 import { getHostels } from '../services/hostel';
-import '../styles/custom.css';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import Alert from '../components/common/Alert';
 
 const HostelSearch = () => {
-  const [hostels, setHostels] = useState([]);
+  const { data: hostels, error, loading, fetchData } = useApi(getHostels);
   const [filteredHostels, setFilteredHostels] = useState([]);
 
   useEffect(() => {
-    async function fetchData() {
-      const data = await getHostels();
-      setHostels(data);
-      setFilteredHostels(data);
-    }
     fetchData();
   }, []);
 
+  useEffect(() => {
+    setFilteredHostels(hostels);
+  }, [hostels]);
+
   const handleFilter = (filters) => {
-    const result = hostels.filter((hostel) => {
-      return (
-        (!filters.location || hostel.location.includes(filters.location)) &&
-        (!filters.price || hostel.price <= filters.price) &&
-        (!filters.amenities || filters.amenities.every(a => hostel.amenities.includes(a)))
-      );
+    const filtered = hostels.filter((hostel) => {
+      const matchesLocation = filters.location
+        ? hostel.location.toLowerCase().includes(filters.location.toLowerCase())
+        : true;
+      const matchesPrice = filters.maxPrice
+        ? hostel.pricePerNight <= filters.maxPrice
+        : true;
+      return matchesLocation && matchesPrice;
     });
-    setFilteredHostels(result);
+    setFilteredHostels(filtered);
   };
 
   return (
-    <div className="bg-white min-h-screen p-4 md:p-8">
-      <h1 className="text-2xl font-bold text-navy mb-4">Search Hostels</h1>
+    <div className="max-w-7xl mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Find Your Ideal Hostel</h1>
+
       <HostelFilters onFilter={handleFilter} />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <HostelList hostels={filteredHostels} />
-        <HostelMap hostels={filteredHostels} />
-      </div>
+
+      {loading && <LoadingSpinner />}
+      {error && <Alert type="error" message="Failed to fetch hostels." />}
+
+      {!loading && !error && (
+        <>
+          <HostelList hostels={filteredHostels} />
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold mb-2">Map View</h2>
+            <HostelMap hostels={filteredHostels} />
+          </div>
+        </>
+      )}
     </div>
   );
 };

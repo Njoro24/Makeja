@@ -1,16 +1,15 @@
 // src/components/common/Navigation.jsx
-import React from 'react';
+
 import { Link } from 'react-router-dom';
 
 const Navigation = () => {
   return (
-    <nav className="bg-navy text-white px-6 py-4 shadow-md">
+    <nav className="bg-primary text-white shadow p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-xl font-bold">Kejani</Link>
-        <div className="flex gap-4">
-          <Link to="/" className="hover:text-gray-300">Home</Link>
-          <Link to="/search" className="hover:text-gray-300">Search</Link>
-          <Link to="/login" className="hover:text-gray-300">Login</Link>
+        <Link to="/" className="text-2xl font-bold tracking-tight">MakejaHostels</Link>
+        <div className="space-x-4">
+          <Link to="/" className="hover:underline">Home</Link>
+          {/* Future links like Bookings, Profile, etc. */}
         </div>
       </div>
     </nav>
