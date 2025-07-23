@@ -1,16 +1,50 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Home } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Handle scrolling when navigating with state
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      const timer = setTimeout(() => {
+        const element = document.getElementById(location.state.scrollTo);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100); // Small delay to ensure the page has rendered
+      
+      // Clear the state after scrolling
+      window.history.replaceState({}, document.title);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [location]);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleNavigation = (sectionId) => {
+    // If we're on the home page, scroll to section
+    if (window.location.pathname === '/') {
+      scrollToSection(sectionId);
     } else {
-      console.log(`Section with ID "${sectionId}" not found`);
+      // Navigate to home page and scroll to section
+      navigate('/', { state: { scrollTo: sectionId } });
+    }
+  };
+
+  const handleHomeClick = () => {
+    if (window.location.pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/');
     }
   };
 
@@ -27,19 +61,19 @@ const Header = () => {
             </span>
           </div>
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-gray-300 hover:text-purple-200 transition-all duration-300 hover:scale-110 relative group hover:drop-shadow-lg">
+            <Link to="/" onClick={handleHomeClick} className="text-gray-300 hover:text-purple-200 transition-all duration-300 hover:scale-110 relative group hover:drop-shadow-lg">
               Home
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-violet-500 transition-all duration-300 group-hover:w-full shadow-lg shadow-purple-500/50"></span>
             </Link>
-            <button onClick={() => scrollToSection('home')} className="text-gray-300 hover:text-purple-200 transition-all duration-300 hover:scale-110 relative group hover:drop-shadow-lg">
+            <button onClick={() => handleNavigation('about')} className="text-gray-300 hover:text-purple-200 transition-all duration-300 hover:scale-110 relative group hover:drop-shadow-lg">
               About
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-violet-500 transition-all duration-300 group-hover:w-full shadow-lg shadow-purple-500/50"></span>
             </button>
-            <button onClick={() => scrollToSection('featured-hostels')} className="text-gray-300 hover:text-purple-200 transition-all duration-300 hover:scale-110 relative group hover:drop-shadow-lg">
+            <button onClick={() => handleNavigation('featured')} className="text-gray-300 hover:text-purple-200 transition-all duration-300 hover:scale-110 relative group hover:drop-shadow-lg">
               <span className="bg-gradient-to-r from-purple-300 to-violet-300 bg-clip-text text-transparent font-medium">Browse Hostels</span>
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-violet-500 transition-all duration-300 group-hover:w-full shadow-lg shadow-purple-500/50"></span>
             </button>
-            <button onClick={() => scrollToSection('contact-section')} className="text-gray-300 hover:text-purple-200 transition-all duration-300 hover:scale-110 relative group hover:drop-shadow-lg">
+            <button onClick={() => handleNavigation('contact')} className="text-gray-300 hover:text-purple-200 transition-all duration-300 hover:scale-110 relative group hover:drop-shadow-lg">
               Contact
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-violet-500 transition-all duration-300 group-hover:w-full shadow-lg shadow-purple-500/50"></span>
             </button>

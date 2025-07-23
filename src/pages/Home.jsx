@@ -13,6 +13,21 @@ function Home() {
     totalBookings: 0,
     averageRating: 0
   });
+
+const location = useLocation();
+
+useEffect(() => {
+  if (location.state?.scrollTo) {
+    const timer = setTimeout(() => {
+      const element = document.getElementById(location.state.scrollTo);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100); // Small delay to ensure page is loaded
+    
+    return () => clearTimeout(timer);
+  }
+}, [location]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 

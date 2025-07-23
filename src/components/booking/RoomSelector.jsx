@@ -9,14 +9,14 @@ const RoomSelector = () => {
 
   useEffect(() => {
     const loadRooms = async () => {
-      const data = await fetchAvailableRooms(); // from Fancy's hostel.js
+      const data = await fetchAvailableRooms();
       setRooms(data);
     };
     loadRooms();
   }, []);
 
   const handleSelect = (room) => {
-    setSelectedRoom(room); // Save in booking context
+    setSelectedRoom(room);
   };
 
   return (

@@ -1,4 +1,6 @@
+
 import React, { useState } from 'react';
+import '../index.css';
 import { 
   Home, 
   MapPin, 
@@ -56,25 +58,25 @@ const LandingPage = () => {
       id: 3,
       name: "B-Block Living",
       image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=300&h=200&fit=crop",
-      location: "Karen",
+      location: "Jogoo rd",
       price: "KSH 15,000",
       rating: 4.7,
       features: ["WiFi", "Pool", "Security"]
     },
     {
       id: 4,
-      name: "Quinta Living",
+      name: "Qwetu Living",
       image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=200&fit=crop",
-      location: "Kilimani",
+      location: "Kahawa Wendani",
       price: "KSH 10,000",
       rating: 4.6,
       features: ["WiFi", "Parking", "Garden"]
     },
     {
       id: 5,
-      name: "Mjenkeuni Living",
+      name: "Mpeketoni Living",
       image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=300&h=200&fit=crop",
-      location: "Eastleigh",
+      location: "Pangani",
       price: "KSH 9,000",
       rating: 4.5,
       features: ["WiFi", "Security", "Transport"]
@@ -405,6 +407,8 @@ const LandingPage = () => {
     <div className="min-h-screen bg-slate-950 text-gray-100 text-lg font-medium">
       {/* Notification */}
       <Notification />
+
+      
       
       {/* Hero Section */}
       <section id="home" className="section-modern pt-20 pb-32 px-0 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 relative overflow-hidden w-full">
@@ -437,7 +441,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* About Section */}
+      {/* AboutSection */}
       <section id="about" className="bg-slate-900 py-16 px-0 w-full">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-white mb-6">About Us</h2>
@@ -479,8 +483,8 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Featured Hostels Section */}
-      <section id="hostels" className="section-modern py-20 bg-gradient-to-b from-slate-950 to-slate-900 px-0 w-full">
+      {/* Featured*/}
+      <section id="featured" className="section-modern py-20 bg-gradient-to-b from-slate-950 to-slate-900 px-0 w-full">
         <div className="max-w-5xl mx-auto px-4">
           <div className="mb-16">
             <h2 className="text-4xl font-bold text-white mb-4 text-center">Featured Hostels</h2>
@@ -543,8 +547,8 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="about-features" className="section-modern py-20 bg-slate-900/50 px-0 w-full">
+      {/* Why us */}
+      <section id="about" className="section-modern py-20 bg-slate-900/50 px-0 w-full">
         <div className="max-w-5xl mx-auto px-4">
           <div className="mb-16">
             <h2 className="text-4xl font-bold text-white mb-4 text-center">Why Choose Makeja?</h2>
