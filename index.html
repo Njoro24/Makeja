@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2563eb" />
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Makejani – A modern, responsive React application with a clean UI and reusable components." />
+    <meta name="keywords" content="makejani, react, tailwind css, ui components, responsive design, javascript" />
+    <meta name="author" content="Makejani Team" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Makejani" />
+    <meta property="og:description" content="A modern, responsive React application with a clean UI and reusable components." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://your-domain.com" />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image:alt" content="Makejani" />
+    <meta property="og:site_name" content="Makejani" />
+
+    <!-- Twitter Meta -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Makejani" />
+    <meta name="twitter:description" content="A modern, responsive React application with a clean UI and reusable components." />
+    <meta name="twitter:image" content="/og-image.png" />
+    <meta name="twitter:image:alt" content="Makejani" />
+
+    <!-- Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#2563eb" />
+    <meta name="msapplication-TileColor" content="#2563eb" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+
+    <!-- Accessibility -->
+    <meta name="color-scheme" content="light dark" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Makejani",
+        "description": "A modern, responsive React application with a clean UI and reusable components.",
+        "url": "https://your-domain.com",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "author": {
+          "@type": "Organization",
+          "name": "Makejani Team"
+        }
+      }
+    </script>
+
+    <title>Makejani</title>
+  </head>
+  <body>
+    <noscript>
+      <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f3f4f6; display: flex; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; text-align: center; z-index: 9999;">
+        <div style="max-width: 400px; padding: 2rem;">
+          <h1 style="color: #1f2937; margin-bottom: 1rem;">JavaScript Required</h1>
+          <p style="color: #6b7280; margin-bottom: 1.5rem;">
+            Please enable JavaScript in your browser and reload the page.
+          </p>
+          <button onclick="window.location.reload()" style="background: #2563eb; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; font-weight: 500; cursor: pointer;">
+            Reload Page
+          </button>
+        </div>
+      </div>
+    </noscript>
+
+    <!-- Loading Spinner -->
+    <div id="loading-indicator" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; display: flex; align-items: center; justify-content: center; z-index: 9998; transition: opacity 0.3s ease;">
+      <div style="text-align: center;">
+        <div style="width: 40px; height: 40px; border: 3px solid #e5e7eb; border-top: 3px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
+        <p style="color: #6b7280; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+          Loading...
+        </p>
+      </div>
+    </div>
+
+    <style>
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+
+    <div id="root"></div>
+
+    <!-- Vite Script -->
+    <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Remove Loader on Load -->
+    <script>
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const loader = document.getElementById('loading-indicator');
+          if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(() => loader.remove(), 300);
+          }
+        }, 100);
+      });
+    </script>
+  </body>
+</html>
