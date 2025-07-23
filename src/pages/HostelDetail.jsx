@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import useApi from '../hooks/useApi';
 import { BASE_API } from '../utils/constants';
-import HostelDetails from '../components/hostel/HostelDetails';
+
 
 const HostelDetail = () => {
   const { id } = useParams();
