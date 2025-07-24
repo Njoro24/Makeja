@@ -27,6 +27,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/test" element={<TestInput />} />
+              <Route path="/payment-failed" element={<PaymentFailed />} />
 
               {/* Protected Routes */}
               <Route
