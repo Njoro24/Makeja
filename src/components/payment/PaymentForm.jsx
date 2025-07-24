@@ -56,7 +56,9 @@ export default function PaymentForm() {
         // You can automatically check status after a delay
         setTimeout(() => checkMpesaStatus(result.data.CheckoutRequestID), 10000)
       } else {
-        setError(result.message || 'M-Pesa payment failed')
+        // M-Pesa request failed initially
+        const reason = result.message?.includes('rate') ? 'rate_limit' : 'network_error'
+        navigate(`/payment-failed?reason=${reason}&phone=${formData.phone}&amount=${bookingData?.totalAmount}`)
       }
     } catch (err) {
       setError('M-Pesa payment failed. Try again.')
@@ -90,9 +92,15 @@ export default function PaymentForm() {
         // Payment successful
         navigate('/payment-success')
       } else if (result.data?.ResultCode === '1032') {
-        setError('Payment was cancelled by user')
+        // Payment cancelled by user
+        navigate(`/payment-failed?reason=cancelled&phone=${formData.phone}&amount=${bookingData?.totalAmount}&checkout_request_id=${requestId}`)
+      } else if (result.data?.ResultCode === '1037') {
+        // Timeout
+        navigate(`/payment-failed?reason=timeout&phone=${formData.phone}&amount=${bookingData?.totalAmount}&checkout_request_id=${requestId}`)
       } else {
-        setError('Payment failed or is still pending')
+        // Other failures
+        const reason = result.data?.ResultDesc || 'system_error'
+        navigate(`/payment-failed?reason=${reason}&phone=${formData.phone}&amount=${bookingData?.totalAmount}&checkout_request_id=${requestId}`)
       }
     } catch (err) {
       setError('Failed to check payment status')
