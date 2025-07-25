@@ -3,6 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Header from './components/common/Header';
+import PaymentFailed from './components/payment/PaymentFailed';
 import './index.css';
 
 // Pages
