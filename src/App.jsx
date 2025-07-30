@@ -13,7 +13,9 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MainLandingPage from './pages/MainLandingPage';
 import TestInput from './pages/TestInput';
-import HostelDetails from './components/hostel/HostelDetails'; // Add this import
+import HostelDetails from './components/hostel/HostelDetails'; 
+import ProfilePage from './pages/ProfilePage';// Add this import
+
 
 function App() {
   return (
@@ -59,14 +61,14 @@ function App() {
                 }
               />
 
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <div>Profile - Coming Soon</div>
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+  path="/profile"
+  element={
+    <ProtectedRoute>
+      <ProfilePage />
+    </ProtectedRoute>
+  }
+/>
 
               <Route
                 path="/admin"
