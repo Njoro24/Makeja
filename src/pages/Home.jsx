@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; 
 import SearchBar from '../components/common/SearchBar';
 import { toast } from 'react-toastify';
@@ -14,22 +14,22 @@ function Home() {
     averageRating: 0
   });
 
-const location = useLocation();
-
-useEffect(() => {
-  if (location.state?.scrollTo) {
-    const timer = setTimeout(() => {
-      const element = document.getElementById(location.state.scrollTo);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100); // Small delay to ensure page is loaded
-    
-    return () => clearTimeout(timer);
-  }
-}, [location]);
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      const timer = setTimeout(() => {
+        const element = document.getElementById(location.state.scrollTo);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [location]);
 
   // Mock data - replace with actual API calls
   useEffect(() => {
@@ -37,7 +37,7 @@ useEffect(() => {
       try {
         setLoading(true);
         
-        // Simulate API call delay
+       
         await new Promise(resolve => setTimeout(resolve, 1000));
         
         // featured hostels data
@@ -150,7 +150,7 @@ useEffect(() => {
           </h1>
           <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-blue-100">
             Discover comfortable, affordable student accommodation across Kenya. 
-            {isAuthenticated ? ` Welcome back, ${user?.firstName || user?.first_name || user?.email || ''}!` : ' Join thousands of students who found their home away from home.'}
+            {isAuthenticated ? ` Welcome back, ${user?.firstName || user?.first_name || user?.name || user?.email || ''}!` : ' Join thousands of students who found their home away from home.'}
           </p>
           
           {/* Search Bar */}
@@ -158,7 +158,7 @@ useEffect(() => {
             <SearchBar onSearch={handleSearch} />
           </div>
           
-          {!isAuthenticated && (
+          {!isAuthenticated ? (
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 to="/register"
@@ -172,6 +172,21 @@ useEffect(() => {
               >
                 Login
               </Link>
+            </div>
+          ) : (
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                to="/dashboard"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-colors shadow-lg"
+              >
+                Go to Dashboard
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="border-2 border-red-400 text-red-200 px-8 py-3 rounded-lg font-semibold hover:bg-red-600 hover:text-white transition-colors shadow-lg"
+              >
+                Logout
+              </button>
             </div>
           )}
         </div>

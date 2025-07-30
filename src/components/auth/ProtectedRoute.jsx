@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { authService } from '../../services/auth.js';
+import { useAuth } from '../../context/AuthContext';
 
 // Protected Route Component
 const ProtectedRoute = ({ 
@@ -12,33 +12,46 @@ const ProtectedRoute = ({
   fallback = null 
 }) => {
   const location = useLocation();
-  const isAuthenticated = authService.isAuthenticated();
-  const currentUser = authService.getCurrentUser();
+  const { isAuthenticated, user, isLoading } = useAuth();
+
+  // Show loading fallback while checking auth status
+  if (isLoading) {
+    return fallback || (
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        minHeight: '100vh' 
+      }}>
+        <div>Loading...</div>
+      </div>
+    );
+  }
 
   // If we require auth but user is not authenticated
   if (requireAuth && !isAuthenticated) {
     return (
       <Navigate 
         to={redirectTo} 
-        state={{ from: location.pathname }} 
+        state={{ from: location }} 
         replace 
       />
     );
   }
 
-  // If we don't require auth but user is authenticated
+  // If we don't require auth but user is authenticated (for login/register pages)
   if (!requireAuth && isAuthenticated) {
-    const from = location.state?.from || '/dashboard';
+    const from = location.state?.from?.pathname || '/home';
     return <Navigate to={from} replace />;
   }
 
   // Check role-based access
-  if (requireAuth && currentUser) {
+  if (requireAuth && user) {
     // Handle both allowedRoles array and requiredRole string
     const rolesToCheck = requiredRole ? [requiredRole] : allowedRoles;
     
     if (rolesToCheck.length > 0) {
-      const userRole = currentUser.role || currentUser.userType;
+      const userRole = user.role || user.userType;
       if (!rolesToCheck.includes(userRole)) {
         return (
           <div style={{ 
@@ -73,12 +86,7 @@ const ProtectedRoute = ({
     }
   }
 
-  // Show fallback while checking auth status
-  if (fallback && requireAuth && !currentUser) {
-    return fallback;
-  }
-
-  // Render the protected component
+  
   return children;
 };
 

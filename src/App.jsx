@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Header from './components/common/Header';
 import PaymentFailed from './components/payment/PaymentFailed';
+import EmailVerificationPage from './components/auth/EmailVerification';
 import './index.css';
 
 // Pages
@@ -28,6 +29,7 @@ function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/test" element={<TestInput />} />
               <Route path="/payment-failed" element={<PaymentFailed />} />
+             <Route path="/verify-email" component={EmailVerificationPage} />
 
               <Route
                 path="/hostels/:id"

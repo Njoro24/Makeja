@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, User, Mail, Lock, UserPlus, CheckCircle, X } from 'lucide-react';
+import { Eye, EyeOff, User, Mail, Lock, UserPlus, CheckCircle, X, AlertCircle, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const RegisterPage = () => {
@@ -15,8 +15,45 @@ const RegisterPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [resendingEmail, setResendingEmail] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
 
   const navigate = useNavigate();
+
+  // Check if online
+  const isOnline = () => {
+    return navigator.onLine;
+  };
+
+  // Fixed email sending function - only handle resend
+  const sendVerificationEmail = async (email, isResend = false) => {
+    try {
+      // Only handle resend - initial verification should be handled by registration
+      if (!isResend) {
+        throw new Error('Initial verification email should be sent by registration endpoint');
+      }
+      
+      const response = await fetch('/api/auth/resend-verification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        // Get the actual error from server
+        const errorData = await response.json().catch(() => ({ error: `Server error: ${response.status}` }));
+        throw new Error(errorData.error || errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Email error:', error);
+      throw error;
+    }
+  };
 
   // Validation function
   const validateForm = () => {
@@ -81,32 +118,114 @@ const RegisterPage = () => {
     }
   };
 
-  // Handle form submission
+  // Updated handleSubmit function - remove the email sending attempt
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check internet connection first
+    if (!isOnline()) {
+      setErrors({ 
+        submit: 'No internet connection. Please check your connection and try again.' 
+      });
+      return;
+    }
 
     if (!validateForm()) {
       return;
     }
 
     setIsLoading(true);
+    setErrors({});
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Here you would typically call your registration API
-      console.log('Registration data:', {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
+      // Prepare registration data
+      const registrationData = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
         email: formData.email,
         password: formData.password
+      };
+
+      console.log('Sending registration data:', registrationData);
+
+      // Register user with proper error handling and correct field names
+      const registerResponse = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(registrationData),
       });
 
-      // Show success modal instead of alert
+      // Handle different response scenarios
+      if (!registerResponse.ok) {
+        let errorMessage = 'Registration failed';
+        
+        if (registerResponse.status === 404) {
+          errorMessage = 'Registration service is not available. Please try again later or contact support.';
+        } else if (registerResponse.status === 400) {
+          // Try to get specific error message for 400 errors
+          try {
+            const contentType = registerResponse.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+              const errorData = await registerResponse.json();
+              errorMessage = errorData.error || errorData.message || 'Invalid registration data. Please check all fields and try again.';
+            } else {
+              const errorText = await registerResponse.text();
+              errorMessage = errorText || 'Invalid registration data. Please check all fields and try again.';
+            }
+          } catch {
+            errorMessage = 'Invalid registration data. Please check all fields and try again.';
+          }
+        } else if (registerResponse.status === 409) {
+          errorMessage = 'An account with this email already exists.';
+        } else if (registerResponse.status === 500) {
+          errorMessage = 'Server error. Please try again later.';
+        } else {
+          // Try to get specific error message from response
+          try {
+            const contentType = registerResponse.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+              const errorData = await registerResponse.json();
+              errorMessage = errorData.message || errorMessage;
+            } else {
+              const errorText = await registerResponse.text();
+              errorMessage = errorText || registerResponse.statusText || errorMessage;
+            }
+          } catch {
+            errorMessage = `Registration failed (${registerResponse.status})`;
+          }
+        }
+        
+        throw new Error(errorMessage);
+      }
+
+      // Safe JSON parsing for successful response
+      let registerData;
+      try {
+        const contentType = registerResponse.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          registerData = await registerResponse.json();
+        } else {
+          // If not JSON, treat as success but with no data
+          registerData = { success: true };
+        }
+      } catch {
+        // If JSON parsing fails, treat as success
+        registerData = { success: true };
+      }
+
+      console.log('Registration successful:', registerData);
+
+      // Assume email was sent by registration endpoint
+      setEmailSent(true);
+
+      // Store registered email for resend functionality
+      setRegisteredEmail(formData.email);
+      
       setShowSuccessModal(true);
       
-      // Reset form
+      // Reset form with correct field names
       setFormData({
         firstName: '',
         lastName: '',
@@ -114,10 +233,59 @@ const RegisterPage = () => {
         password: '',
         confirmPassword: ''
       });
+
     } catch (error) {
-      setErrors({ submit: 'Registration failed. Please try again.' });
+      console.error('Registration error:', error);
+      
+      // Set user-friendly error message
+      let errorMessage = error.message;
+      
+      if (error.message.includes('Failed to fetch') || error.name === 'TypeError') {
+        if (!isOnline()) {
+          errorMessage = 'No internet connection. Please check your connection and try again.';
+        } else {
+          errorMessage = 'Network error. Please check your connection and try again.';
+        }
+      } else if (error.message.includes('404')) {
+        errorMessage = 'Registration service is currently unavailable. Please try again later.';
+      }
+      
+      setErrors({ 
+        submit: errorMessage
+      });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Resend verification email with better error handling
+  const handleResendEmail = async () => {
+    if (!registeredEmail) return;
+
+    // Check internet connection
+    if (!isOnline()) {
+      alert('No internet connection. Please check your connection and try again.');
+      return;
+    }
+
+    setResendingEmail(true);
+    try {
+      await sendVerificationEmail(registeredEmail, true); // true = resend
+      setEmailSent(true);
+      alert('Verification email sent successfully!');
+    } catch (error) {
+      console.error('Failed to resend verification email:', error);
+      
+      let errorMessage = 'Failed to resend verification email. Please try again.';
+      if (error.message.includes('404')) {
+        errorMessage = 'Email service is currently unavailable. Please try again later.';
+      } else if (error.message.includes('Failed to fetch') || !isOnline()) {
+        errorMessage = 'Network error. Please check your connection and try again.';
+      }
+      
+      alert(errorMessage);
+    } finally {
+      setResendingEmail(false);
     }
   };
 
@@ -143,13 +311,15 @@ const RegisterPage = () => {
           <h2 className="text-3xl font-bold text-white mb-2">Create your account</h2>
           <p className="text-gray-400">Join us today and start your journey</p>
         </div>
+
         {/* Registration Form */}
         <div className="bg-slate-800/50 backdrop-blur-lg rounded-2xl shadow-2xl border border-slate-700/50 p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* First Name */}
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-300 mb-2">
                   First Name
                 </label>
                 <div className="relative">
@@ -175,7 +345,7 @@ const RegisterPage = () => {
 
               {/* Last Name */}
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-2">
                   Last Name
                 </label>
                 <div className="relative">
@@ -202,7 +372,7 @@ const RegisterPage = () => {
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                 Email Address
               </label>
               <div className="relative">
@@ -228,7 +398,7 @@ const RegisterPage = () => {
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                 Password
               </label>
               <div className="relative">
@@ -265,7 +435,7 @@ const RegisterPage = () => {
 
             {/* Confirm Password */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
                 Confirm Password
               </label>
               <div className="relative">
@@ -302,15 +472,15 @@ const RegisterPage = () => {
 
             {/* Submit Error */}
             {errors.submit && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                <p className="text-sm text-red-600">{errors.submit}</p>
+              <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-3 flex items-center">
+                <AlertCircle className="h-5 w-5 text-red-400 mr-2 flex-shrink-0" />
+                <p className="text-sm text-red-300">{errors.submit}</p>
               </div>
             )}
 
             {/* Submit Button */}
             <button
-              type="button"
-              onClick={handleSubmit}
+              type="submit"
               disabled={isLoading}
               className={`w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-sm font-medium transition-all duration-200 ${
                 isLoading
@@ -336,6 +506,7 @@ const RegisterPage = () => {
               <p className="text-sm text-slate-400">
                 Already have an account?{' '}
                 <button
+                  type="button"
                   onClick={handleLoginClick}
                   className="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-200 underline"
                 >
@@ -343,7 +514,9 @@ const RegisterPage = () => {
                 </button>
               </p>
             </div>
-          </div>
+          </form>
+        </div>
+
         {/* Terms and Privacy */}
         <div className="text-center text-xs text-slate-500 mt-8">
           By creating an account, you agree to our{' '}
@@ -364,6 +537,7 @@ const RegisterPage = () => {
             >
               <X className="h-5 w-5" />
             </button>
+
             {/* Modal content */}
             <div className="text-center">
               <div className="mx-auto h-16 w-16 bg-green-700/20 rounded-full flex items-center justify-center mb-4">
@@ -372,22 +546,66 @@ const RegisterPage = () => {
               <h3 className="text-xl font-bold text-white mb-2">
                 Registration Successful!
               </h3>
-              <p className="text-slate-300 mb-6">
-                Your account has been created successfully. Please check your email to verify your account and complete the setup process.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={closeSuccessModal}
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors font-medium"
-                >
-                  Continue
-                </button>
-                <button
-                  onClick={handleLoginClick}
-                  className="flex-1 bg-slate-800 text-slate-200 py-2 px-4 rounded-lg hover:bg-slate-700 transition-colors font-medium border border-slate-600"
-                >
-                  Go to Login
-                </button>
+              
+              {emailSent ? (
+                <div>
+                  <p className="text-slate-300 mb-4">
+                    Your account has been created successfully! We've sent a verification email to:
+                  </p>
+                  <p className="text-blue-400 font-medium mb-4">{registeredEmail}</p>
+                  <p className="text-slate-300 mb-6 text-sm">
+                    Please check your email and click the verification link to activate your account.
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-slate-300 mb-4">
+                    Your account has been created, but we couldn't send the verification email.
+                  </p>
+                  <div className="bg-yellow-900/20 border border-yellow-500/50 rounded-lg p-3 mb-4 flex items-start">
+                    <AlertCircle className="h-5 w-5 text-yellow-400 mr-2 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-yellow-300">
+                      You can try resending the verification email below.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-col gap-3">
+                {!emailSent && (
+                  <button
+                    onClick={handleResendEmail}
+                    disabled={resendingEmail}
+                    className="flex items-center justify-center bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {resendingEmail ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Resend Verification Email
+                      </>
+                    )}
+                  </button>
+                )}
+                
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={closeSuccessModal}
+                    className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors font-medium"
+                  >
+                    Continue
+                  </button>
+                  <button
+                    onClick={handleLoginClick}
+                    className="flex-1 bg-slate-800 text-slate-200 py-2 px-4 rounded-lg hover:bg-slate-700 transition-colors font-medium border border-slate-600"
+                  >
+                    Go to Login
+                  </button>
+                </div>
               </div>
             </div>
           </div>
