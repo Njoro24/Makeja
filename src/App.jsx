@@ -13,10 +13,11 @@ import Home from './pages/Home';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MainLandingPage from './pages/MainLandingPage';
+import TestInput from './pages/TestInput';
 import HostelDetails from './components/hostel/HostelDetails';
-import ProfilePage from './pages/ProfilePage';
-import Dashboard from './pages/Dashboard';
-import Admpage from "./Admin/Admpage";
+import MyBookingsPage from './pages/MyBookingsPage';
+import BookingPage from './pages/BookingPage';
+import HostRoomPage from './pages/HostRoomPage';
 
 function App() {
   return (
@@ -30,11 +31,21 @@ function App() {
               <Route path="/" element={<MainLandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
-           
+              <Route path="/booking/:id" element={<BookingPage />} />
+
+              <Route path="/test" element={<TestInput />} />
               <Route path="/payment-failed" element={<PaymentFailed />} />
               <Route path="/verify-email" element={<EmailVerificationPage />} />
 
-              
+              <Route
+                path="/home"
+                element={
+                  <ProtectedRoute>
+                    <Home />
+                  </ProtectedRoute>
+                }
+              />
+
               <Route
                 path="/hostel/:id"
                 element={
@@ -44,21 +55,29 @@ function App() {
                 }
               />
 
-              {/* Optional: Standalone reviews route */}
               <Route
-                path="/hostel/:id/reviews"
+                path="/bookings"
                 element={
                   <ProtectedRoute>
-                    <HostelReviews hostelId={window.location.pathname.split('/')[2]} />
+                    <MyBookingsPage />
                   </ProtectedRoute>
                 }
               />
 
               <Route
-                path="/home"
+                path="/booking-page"
                 element={
                   <ProtectedRoute>
-                    <Home />
+                    <BookingPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/host-room"
+                element={
+                  <ProtectedRoute>
+                    <HostRoomPage />
                   </ProtectedRoute>
                 }
               />
