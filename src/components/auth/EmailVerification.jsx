@@ -2,34 +2,34 @@ import React, { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, AlertCircle, RefreshCw, Mail, ArrowRight, Clock } from 'lucide-react';
 
 const EmailVerificationPage = () => {
-  const [verificationStatus, setVerificationStatus] = useState('loading'); // loading, success, error, expired, invalid
+  const [verificationStatus, setVerificationStatus] = useState('loading');
   const [message, setMessage] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [isResending, setIsResending] = useState(false);
   const [token, setToken] = useState('');
 
-// Extract token from URL parameters
-useEffect(() => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const tokenFromUrl = urlParams.get('token');
-  
-  if (tokenFromUrl) {
-    setToken(tokenFromUrl);
-    verifyEmail(tokenFromUrl);
-  } else {
+  // Extract token from URL parameters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenFromUrl = urlParams.get('token');
     
-    console.error('No verification token found in URL');
-    
-    setError('Invalid verification link. Please check your email for the correct link.');
-  }
-    }, []);
+    if (tokenFromUrl) {
+      setToken(tokenFromUrl);
+      verifyEmail(tokenFromUrl);
+    } else {
+      console.error('No verification token found in URL');
+      setVerificationStatus('invalid');
+      setMessage('Invalid verification link. Please check your email for the correct link.');
+    }
+  }, []);
 
   // Verify email with backend
   const verifyEmail = async (verificationToken) => {
     try {
       setVerificationStatus('loading');
       
-      const response = await fetch(`/api/verify-email/${verificationToken}`, {
+      // Updated API endpoint to match your backend
+      const response = await fetch(`/api/auth/verify-email?token=${verificationToken}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ useEffect(() => {
 
     setIsResending(true);
     try {
-      const response = await fetch('/api/resend-verification-email', {
+      const response = await fetch('/api/auth/resend-verification', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -94,33 +94,18 @@ useEffect(() => {
     }
   };
 
-  // Extract token from URL parameters
-useEffect(() => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const tokenFromUrl = urlParams.get('token');
-  
-  if (tokenFromUrl) {
-    setToken(tokenFromUrl);
-    verifyEmail(tokenFromUrl);
-  } else {
-    
-    console.error('No verification token found in URL');
-    
-    setError('Invalid verification link. Please check your email for the correct link.');
-  }
-}, []);
-
-const handleLoginClick = () => {
-  window.location.href = '/login';
-};
-
-const handleDashboardClick = () => {
-  window.location.href = '/dashboard';
+  const handleLoginClick = () => {
+    window.location.href = '/login';
   };
 
-const handleBackToHome = () => {
-  window.location.href = '/';
+  const handleDashboardClick = () => {
+    window.location.href = '/dashboard';
   };
+
+  const handleBackToHome = () => {
+    window.location.href = '/';
+  };
+
   // Loading State
   if (verificationStatus === 'loading') {
     return (

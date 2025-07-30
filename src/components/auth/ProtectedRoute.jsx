@@ -51,7 +51,9 @@ const ProtectedRoute = ({
     const rolesToCheck = requiredRole ? [requiredRole] : allowedRoles;
     
     if (rolesToCheck.length > 0) {
-      const userRole = user.role || user.userType;
+      // FIX: Check for admin using is_admin boolean
+      const userRole = user.is_admin ? 'admin' : 'user';
+      
       if (!rolesToCheck.includes(userRole)) {
         return (
           <div style={{ 
@@ -65,6 +67,9 @@ const ProtectedRoute = ({
               <h1 style={{ color: '#dc2626', marginBottom: '1rem' }}>Access Denied</h1>
               <p style={{ color: '#6b7280', marginBottom: '1rem' }}>
                 You don't have permission to view this page.
+              </p>
+              <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '1rem' }}>
+                Required role: {rolesToCheck.join(' or ')}, Your role: {userRole}
               </p>
               <button 
                 onClick={() => window.history.back()}
@@ -86,7 +91,6 @@ const ProtectedRoute = ({
     }
   }
 
-  
   return children;
 };
 

@@ -13,7 +13,8 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MainLandingPage from './pages/MainLandingPage';
 import TestInput from './pages/TestInput';
-import HostelDetails from './components/hostel/HostelDetails'; // Add this import
+import HostelDetails from './components/hostel/HostelDetails';
+import AdminDashboard from './Admin/Admpage';
 
 function App() {
   return (
@@ -72,7 +73,7 @@ function App() {
                 path="/admin"
                 element={
                   <ProtectedRoute requiredRole="admin">
-                    <div>Admin Panel - Coming Soon</div>
+                    <AdminDashboard />
                   </ProtectedRoute>
                 }
               />

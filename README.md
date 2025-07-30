@@ -1,7 +1,8 @@
-🏠 Hostel Booking System
+Hostel Booking System
 
 A modern, full-stack hostel booking platform built with React and Flask, designed to connect students with quality accommodation.
-📋 Table of Contents
+
+Table of Contents
 
 Features
 Tech Stack
@@ -23,7 +24,7 @@ Review System - User reviews and ratings for hostels
 Admin Dashboard - Comprehensive management tools
 Responsive Design - Mobile-first responsive interface
 
-🛠 Tech Stack
+Tech Stack
 Backend
 
 Python - Flask framework
@@ -39,7 +40,7 @@ Tailwind CSS - Styling
 Context API - State management
 Axios - API client
 
-🚀 Quick Start
+Quick Start
 Prerequisites
 
 Python 3.9+
@@ -50,7 +51,7 @@ Clone Repository
 bashgit clone https://github.com/yourusername/hostel-booking-system.git
 cd hostel-booking-system
 
-📦 Installation
+Installation
 Backend Setup
 
 Create virtual environment
@@ -90,7 +91,7 @@ Start development server
 
 bashnpm start
 # Server runs on http://localhost:5000
-⚙️ Configuration
+Configuration
 Environment Variables
 Create .env files in both backend and frontend directories:
 Backend (.env)
@@ -106,7 +107,7 @@ Frontend (.env)
 envREACT_APP_API_URL=http://localhost:5000/api
 REACT_APP_ENVIRONMENT=development
 
-📚 API Documentation
+API Documentation
 Authentication Endpoints
 POST /api/auth/register    - User registration
 POST /api/auth/login       - User login
@@ -125,20 +126,21 @@ GET    /api/bookings/:id   - Booking details
 PUT    /api/bookings/:id   - Update booking
 DELETE /api/bookings/:id   - Cancel booking
 For complete API documentation, visit: http://localhost:5000/api/docs
-👥 Team
+
+Team
 This project is developed by a collaborative team:
 
-🔐 Meshack - Authentication & User Management
-💡 Fancy - Payments & Hostel Management
-🧠 Darwin - Booking Logic & Business Rules
-💻 Marvin - Reviews & Admin Dashboard
-🔧 Duncan - Middleware & Utilities
-⚙️ Ian - Testing, Scripts & DevOps
+ Meshack - Authentication & User Management
+ Fancy - Payments & Hostel Management
+ Darwin - Booking Logic & Business Rules
+ Marvin - Reviews & Admin Dashboard
+ Duncan - Middleware & Utilities
+ Ian - Testing, Scripts & DevOps
 
-🗄️ Database Schema
+ Database Schema
 View our interactive database documentation: Database Schema
 
-🧪 Testing
+Testing
 
 Backend Tests
 bashcd backend
@@ -148,7 +150,8 @@ bashcd frontend
 npm test
 End-to-End Tests
 bashnpm run test:e2e
-📝 Contributing
+
+Contributing
 
 Fork the repository
 Create your feature branch (git checkout -b feature/amazing-feature)
@@ -163,15 +166,16 @@ Use ESLint and Prettier for JavaScript
 Write tests for new features
 Update documentation as needed
 
-🐛 Issues & Support
+Issues & Support
 
 Bug Reports: GitHub Issues
 Feature Requests: GitHub Discussions
 Email Support: hello@makeja.com
 
-📄 License
+License
 This project is licensed under the MIT License - see the LICENSE file for details.
-🙏 Acknowledgments
+
+Acknowledgments
 
 React community for excellent documentation
 Flask community for robust framework

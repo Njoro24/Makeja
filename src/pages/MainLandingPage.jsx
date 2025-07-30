@@ -128,7 +128,7 @@ const LandingPage = () => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Here you would make actual API calls to your backend
+      // make actual API calls to your backend
       // const response = await fetch('/api/auth/login', { ... });
       
       if (authMode === 'signup') {
@@ -151,7 +151,7 @@ const LandingPage = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
+    
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }

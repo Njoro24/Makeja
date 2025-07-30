@@ -109,7 +109,7 @@ export const AuthProvider = ({ children }) => {
   // Check for existing session on app load - FIXED: Added proper dependency array
   useEffect(() => {
     checkAuthStatus();
-  }, []); // Empty dependency array prevents infinite calls
+  }, []); 
 
   // Check if user is already authenticated
   const checkAuthStatus = async () => {
@@ -118,8 +118,7 @@ export const AuthProvider = ({ children }) => {
       const storedUser = localStorage.getItem('user');
 
       if (storedToken && storedUser) {
-        // FIXED: Skip token verification if API endpoint doesn't exist
-        // For now, trust the stored token (you can implement proper verification later)
+        
         try {
           const isTokenValid = await verifyToken(storedToken);
           
