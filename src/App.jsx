@@ -1,10 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
 import 'react-toastify/dist/ReactToastify.css';
-
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Header from './components/common/Header';
+import PaymentFailed from './components/payment/PaymentFailed';
 import './index.css';
 
 // Pages
@@ -13,6 +12,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MainLandingPage from './pages/MainLandingPage';
 import TestInput from './pages/TestInput';
+import HostelDetails from './components/hostel/HostelDetails'; 
 
 function App() {
   return (
@@ -27,8 +27,18 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/test" element={<TestInput />} />
+              <Route path="/payment-failed" element={<PaymentFailed />} />
 
-              {/* Protected Routes */}
+              <Route
+                path="/hostels/:id"
+                element={
+                  <ProtectedRoute>
+                    <HostelDetails />
+                  </ProtectedRoute>
+                }
+              />
+
+            
               <Route
                 path="/home"
                 element={
@@ -66,8 +76,6 @@ function App() {
               />
             </Routes>
           </main>
-
-     
         </div>
       </Router>
     </AuthProvider>
