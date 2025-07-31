@@ -12,9 +12,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MainLandingPage from './pages/MainLandingPage';
 import TestInput from './pages/TestInput';
-import HostelDetails from './components/hostel/HostelDetails'; 
-
-function App() {
+import HostelDetail from './components/hostel/HostelDetail'; 
   return (
     <AuthProvider>
       <Router>
@@ -33,7 +31,7 @@ function App() {
                 path="/hostels/:id"
                 element={
                   <ProtectedRoute>
-                    <HostelDetails />
+                    <HostelDetail />
                   </ProtectedRoute>
                 }
               />
