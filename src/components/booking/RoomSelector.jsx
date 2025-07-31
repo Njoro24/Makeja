@@ -60,14 +60,20 @@ RoomCard.propTypes = {
   onSelect: PropTypes.func.isRequired
 };
 
+// RoomSelector.jsx
+import { useNavigate } from 'react-router-dom';
+
 const RoomSelector = ({ rooms, onRoomSelect }) => {
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const navigate = useNavigate();
 
   const handleSelect = (roomId) => {
     const room = rooms.find(r => r.id === roomId);
     setSelectedRoom(roomId);
     onRoomSelect(room);
+    navigate(`/booking/${roomId}`); // Add navigation
   };
+
 
   return (
     <div>
