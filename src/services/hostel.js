@@ -1,6 +1,6 @@
 
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://makejabe-1.onrender.com/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://makejabe-2.onrender.com/api';
 
 export const getHostels = async () => {
   const res = await fetch(`${API_BASE_URL}/hostels`);
