@@ -537,9 +537,12 @@ const LandingPage = () => {
                       </span>
                     ))}
                   </div>
-                  <button className="w-full bg-gradient-to-r from-blue-600/20 to-purple-600/20 hover:from-blue-600 hover:to-purple-600 border border-blue-500/30 hover:border-transparent text-blue-200 hover:text-white py-3 rounded-lg transition-all duration-300 group-hover:shadow-lg font-medium">
+                  <Link
+                    to={`/hostels/${hostel.id}`}
+                    className="w-full block text-center bg-gradient-to-r from-blue-600/20 to-purple-600/20 hover:from-blue-600 hover:to-purple-600 border border-blue-500/30 hover:border-transparent text-blue-200 hover:text-white py-3 rounded-lg transition-all duration-300 group-hover:shadow-lg font-medium"
+                  
                     View Details
-                  </button>
+                  </Link>
                 </div>
               </div>
             ))}
