@@ -1,12 +1,12 @@
-// HostelDetail.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import HostelDetails from './HostelDetails';
 import HostelImages from './HostelImages';
 import HostelReviews from './HostelReviews';
 import HostelAmenities from './HostelAmenities';
-import PropTypes from 'prop-types';
 import { ArrowLeft } from 'lucide-react';
+import { get, API_ENDPOINTS } from '../services/api';
+import { toast } from 'react-toastify';
 
 const HostelDetail = () => {
   const { id } = useParams();
@@ -14,22 +14,26 @@ const HostelDetail = () => {
   const [hostel, setHostel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     const fetchHostel = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/hostels/${id}`);
-        if (!response.ok) {
-          if (response.status === 404) {
-            throw new Error('Hostel not found');
-          }
-          throw new Error('Failed to load hostel details');
+        setError(null);
+        
+        // Use the API service to fetch hostel details
+        const response = await get(API_ENDPOINTS.HOSTEL_DETAILS(id));
+        
+        if (response.success) {
+          setHostel(response.data);
+        } else {
+          throw new Error(response.error?.message || 'Failed to fetch hostel details');
         }
-        const data = await response.json();
-        setHostel(data);
       } catch (err) {
+        console.error('Error fetching hostel:', err);
         setError(err.message || 'Failed to load hostel details.');
+        toast.error(err.message || 'Failed to load hostel details.');
       } finally {
         setLoading(false);
       }
@@ -39,7 +43,7 @@ const HostelDetail = () => {
   }, [id]);
 
   if (loading) return (
-    <div className="flex justify-center items-center h-64">
+    <div className="max-w-6xl mx-auto px-4 py-6 min-h-screen flex items-center justify-center">
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
     </div>
   );
@@ -79,17 +83,20 @@ const HostelDetail = () => {
       {hostel && (
         <>
           <HostelDetails hostel={hostel} />
-          <HostelImages images={hostel.images} />
+          <HostelImages 
+            images={hostel.images} 
+            imageLoaded={imageLoaded}
+            setImageLoaded={setImageLoaded}
+          />
           <HostelAmenities amenities={hostel.amenities} />
-          <HostelReviews reviews={hostel.reviews} />
+          <HostelReviews 
+            reviews={hostel.reviews} 
+            hostelId={hostel.id}
+          />
         </>
       )}
     </div>
   );
-};
-
-HostelDetail.propTypes = {
-  id: PropTypes.string
 };
 
 export default HostelDetail;
