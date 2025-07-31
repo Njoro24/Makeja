@@ -72,7 +72,7 @@ const HostelDetail = () => {
       reviews: [
         {
           id: 1,
-          user: "Mary Johnson",
+          user: "Mary Kamum",
           rating: 5,
           comment: "Safe and clean environment. Great for female students. The management is very caring.",
           date: "2024-01-12"
