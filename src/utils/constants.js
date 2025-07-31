@@ -12,5 +12,5 @@ export const PRICE_RANGES = [
   { label: 'Above KES 10,000', value: 'above_10000' },
 ];
 
-export const BASE_API = "http://localhost:5000"; 
-export const API_BASE_URL = "http://localhost:5000"; 
+export const BASE_API = "https://makejabe-2.onrender.com"; 
+export const API_BASE_URL = "https://makejabe-2.onrender.com";
