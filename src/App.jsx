@@ -15,6 +15,7 @@ import MainLandingPage from './pages/MainLandingPage';
 import TestInput from './pages/TestInput';
 import HostelDetails from './components/hostel/HostelDetails';
 import AdminDashboard from './Admin/Admpage';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
@@ -55,7 +56,7 @@ function App() {
                 path="/dashboard"
                 element={
                   <ProtectedRoute>
-                    <div>Dashboard - Coming Soon</div>
+                    <Dashboard />
                   </ProtectedRoute>
                 }
               />
