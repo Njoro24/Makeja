@@ -40,7 +40,7 @@ export default function PaymentForm() {
         description: `Payment for ${bookingData?.hostelName || 'Hostel Booking'}`
       }
 
-      const response = await fetch('http://localhost:5000/api/mpesa/stk-push', {
+      const response = await fetch('https://makejabe-2.onrender.com/api/mpesa/stk-push', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ export default function PaymentForm() {
     setLoading(true)
 
     try {
-      const response = await fetch('http://localhost:5000/api/mpesa/stk-query', {
+      const response = await fetch('https://makejabe-2.onrender.com/api/mpesa/stk-query', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

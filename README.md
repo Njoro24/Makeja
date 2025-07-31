@@ -79,7 +79,7 @@ bashpython scripts/seed_data.py
 Start backend server
 
 bashflask run
-# Server runs on http://localhost:5000
+# Server runs on 'https://makeja-csu3.vercel.app/'
 Frontend Setup
 
 Install dependencies
@@ -90,7 +90,7 @@ npm install
 Start development server
 
 bashnpm start
-# Server runs on http://localhost:5000
+# Server runs 'https://makejabe-2.onrender.com'
 Configuration
 Environment Variables
 Create .env files in both backend and frontend directories:
