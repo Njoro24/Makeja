@@ -71,12 +71,11 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-
-              <Route
+<Route
                 path="/profile"
                 element={
                   <ProtectedRoute>
-                    <ProfilePage />
+                    <div>Profile - Coming Soon</div>
                   </ProtectedRoute>
                 }
               />
