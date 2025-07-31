@@ -12,11 +12,24 @@ const ReviewItem = ({ review }) => {
     ));
   };
 
+  const formatDate = (dateString) => {
+    const options = { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+  };
+
   return (
     <div className="border-b border-gray-200 pb-4 mb-4">
       <div className="flex items-center mb-2">
-        <div className="bg-gray-100 rounded-full p-2 mr-3">
-          <User className="w-5 h-5 text-gray-500" />
+        <div className="bg-gray-100 rounded-full p-2 mr-3 w-10 h-10 flex items-center justify-center">
+          <span className="font-medium text-gray-600">
+            {review.user.split(' ').map(n => n[0]).join('')}
+          </span>
         </div>
         <div>
           <h4 className="font-medium text-gray-800">{review.user}</h4>
@@ -24,7 +37,7 @@ const ReviewItem = ({ review }) => {
             <div className="flex mr-2">
               {renderStars(review.rating)}
             </div>
-            <span className="text-sm text-gray-500">{review.date}</span>
+            <span className="text-sm text-gray-500">{formatDate(review.date)}</span>
           </div>
         </div>
       </div>
@@ -33,37 +46,45 @@ const ReviewItem = ({ review }) => {
   );
 };
 
-ReviewItem.propTypes = {
-  review: PropTypes.shape({
-    user: PropTypes.string.isRequired,
-    rating: PropTypes.number.isRequired,
-    date: PropTypes.string.isRequired,
-    comment: PropTypes.string.isRequired
-  }).isRequired
-};
-
-const HostelReviews = ({ reviews: initialReviews }) => {
+const HostelReviews = ({ hostelId, initialReviews }) => {
   const [reviews, setReviews] = useState(initialReviews);
   const [showForm, setShowForm] = useState(false);
   const [newReview, setNewReview] = useState({
     rating: 5,
     comment: ''
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Create a new review object
-    const newReviewObj = {
-      user: "Current User", // In a real app, this would be the logged-in user's name
-      rating: newReview.rating,
-      date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
-      comment: newReview.comment
-    };
-    // Add the new review to the list
-    setReviews([...reviews, newReviewObj]);
-    // Reset form and hide
-    setShowForm(false);
-    setNewReview({ rating: 5, comment: '' });
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch(`/api/hostels/${hostelId}/reviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          rating: newReview.rating,
+          comment: newReview.comment
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to submit review');
+
+      const data = await response.json();
+      setReviews([data, ...reviews]);
+      setShowForm(false);
+      setNewReview({ rating: 5, comment: '' });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -80,6 +101,11 @@ const HostelReviews = ({ reviews: initialReviews }) => {
 
       {showForm && (
         <form onSubmit={handleSubmit} className="mb-8 bg-gray-50 p-4 rounded-lg">
+          {error && (
+            <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
+              {error}
+            </div>
+          )}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">Your Rating</label>
             <div className="flex">
@@ -105,22 +131,37 @@ const HostelReviews = ({ reviews: initialReviews }) => {
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               rows="4"
               required
+              maxLength="500"
             />
+            <div className="text-xs text-gray-500 text-right mt-1">
+              {newReview.comment.length}/500 characters
+            </div>
           </div>
           <button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg flex items-center justify-center"
+            disabled={isLoading}
           >
-            Submit Review
+            {isLoading ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Submitting...
+              </>
+            ) : 'Submit Review'}
           </button>
         </form>
       )}
 
       <div>
         {reviews.length > 0 ? (
-          reviews.map((review, index) => (
-            <ReviewItem key={index} review={review} />
-          ))
+          reviews
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .map((review, index) => (
+              <ReviewItem key={review.id || index} review={review} />
+            ))
         ) : (
           <p className="text-gray-500">No reviews yet. Be the first to review!</p>
         )}
@@ -130,8 +171,10 @@ const HostelReviews = ({ reviews: initialReviews }) => {
 };
 
 HostelReviews.propTypes = {
-  reviews: PropTypes.arrayOf(
+  hostelId: PropTypes.string.isRequired,
+  initialReviews: PropTypes.arrayOf(
     PropTypes.shape({
+      id: PropTypes.string,
       user: PropTypes.string.isRequired,
       rating: PropTypes.number.isRequired,
       date: PropTypes.string.isRequired,
