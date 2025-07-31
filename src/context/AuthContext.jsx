@@ -164,7 +164,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: AUTH_ACTIONS.LOGIN_START });
 
     try {
-     const response = await fetch('http://localhost:5000/api/auth/login', {
+     const response = await fetch( 'https://makejabe-1.onrender.com/api/auth/login',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -205,7 +205,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: AUTH_ACTIONS.REGISTER_START });
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/register', {
+      const response = await fetch('https://makejabe-1.onrender.com/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -245,7 +245,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       // Optional: Make API call to invalidate token on server
-      await fetch('http://localhost:5000/api/auth/logout', {
+      await fetch('https://makejabe-1.onrender.com/api/auth/logout', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${state.token}`,
@@ -281,7 +281,7 @@ export const AuthProvider = ({ children }) => {
   // FIXED: Verify token with backend - better error handling
   const verifyToken = async (token) => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/verify', {
+      const response = await fetch('https://makejabe-1.onrender.com/api/auth/verify-token', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

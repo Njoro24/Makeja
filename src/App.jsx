@@ -34,7 +34,7 @@ function App() {
               <Route path="/payment-failed" element={<PaymentFailed />} />
               <Route path="/verify-email" element={<EmailVerificationPage />} />
 
-              {/* Fixed route - changed from /hostels/:id to /hostel/:id and using HostelDetail */}
+              
               <Route
                 path="/hostel/:id"
                 element={

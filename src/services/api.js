@@ -5,7 +5,7 @@ import { getItem, removeItem, STORAGE_KEYS } from '../utils/localStorage';
 // Create axios instance with base configuration
 const api = axios.create({
   // For Vite - use import.meta.env with VITE_ prefix
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://makejabe-1.onrender.com/api',
   timeout: parseInt(import.meta.env.VITE_API_TIMEOUT) || 10000,
   headers: {
     'Content-Type': 'application/json',
