@@ -1,3 +1,4 @@
+// App.jsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider } from './context/AuthContext';
@@ -13,9 +14,10 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MainLandingPage from './pages/MainLandingPage';
 import TestInput from './pages/TestInput';
-import HostelDetail from './components/hostel/HostelDetail'; 
-import ProfilePage from './pages/ProfilePage';// Add this import
-
+import HostelDetail from './components/hostel/HostelDetail';
+import ProfilePage from './pages/ProfilePage';
+import BookingPage from './pages/BookingPage'; // Add this
+import BookingConfirmation from './components/booking/BookingConfirmation'; // Add this
 
 function App() {
   return (
@@ -31,18 +33,36 @@ function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/test" element={<TestInput />} />
               <Route path="/payment-failed" element={<PaymentFailed />} />
-             <Route path="/verify-email" component={EmailVerificationPage} />
+              <Route path="/verify-email" element={<EmailVerificationPage />} />
+              
+              {/* Booking routes */}
+              <Route 
+                path="/booking/:roomId" 
+                element={
+                  <ProtectedRoute>
+                    <BookingPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/booking-confirmation" 
+                element={
+                  <ProtectedRoute>
+                    <BookingConfirmation />
+                  </ProtectedRoute>
+                } 
+              />
 
+              {/* Hostel routes */}
               <Route
                 path="/hostels/:id"
                 element={
                   <ProtectedRoute>
-                    <HostelDetails />
+                    <HostelDetail />
                   </ProtectedRoute>
                 }
               />
 
-            
               <Route
                 path="/home"
                 element={
@@ -53,22 +73,13 @@ function App() {
               />
 
               <Route
-                path="/dashboard"
+                path="/profile"
                 element={
                   <ProtectedRoute>
-                    <div>Dashboard - Coming Soon</div>
+                    <ProfilePage />
                   </ProtectedRoute>
                 }
               />
-
-                <Route
-  path="/profile"
-  element={
-    <ProtectedRoute>
-      <ProfilePage />
-    </ProtectedRoute>
-  }
-/>
 
               <Route
                 path="/admin"
