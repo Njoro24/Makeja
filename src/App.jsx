@@ -13,7 +13,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MainLandingPage from './pages/MainLandingPage';
 import TestInput from './pages/TestInput';
-import HostelDetails from './components/hostel/HostelDetails'; 
+import HostelDetail from './components/hostel/HostelDetail'; 
 import ProfilePage from './pages/ProfilePage';// Add this import
 
 
