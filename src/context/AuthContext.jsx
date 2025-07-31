@@ -106,7 +106,6 @@ const authReducer = (state, action) => {
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // Check for existing session on app load - FIXED: Added proper dependency array
   useEffect(() => {
     checkAuthStatus();
   }, []); 
@@ -292,7 +291,7 @@ export const AuthProvider = ({ children }) => {
       return response.ok;
     } catch (error) {
       console.error('Token verification failed:', error);
-      // If the API endpoint doesn't exist or network fails, return false
+   
       return false;
     }
   };
