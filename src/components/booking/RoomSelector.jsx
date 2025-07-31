@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Bed, User, Check, X } from 'lucide-react';
 
@@ -8,7 +9,7 @@ const RoomCard = ({ room, selected, onSelect }) => {
       className={`border rounded-lg p-4 cursor-pointer transition-all ${
         selected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'
       }`}
-      onClick={() => onSelect(room.id)}
+      onClick={() => onSelect(room)}
     >
       <div className="flex justify-between items-start mb-3">
         <h3 className="font-medium text-gray-800">{room.name}</h3>
@@ -60,27 +61,21 @@ RoomCard.propTypes = {
   onSelect: PropTypes.func.isRequired
 };
 
-// RoomSelector.jsx
-import { useNavigate } from 'react-router-dom';
-
-const RoomSelector = ({ rooms, onRoomSelect }) => {
+const RoomSelector = ({ rooms, hostelId }) => {
   const [selectedRoom, setSelectedRoom] = useState(null);
   const navigate = useNavigate();
 
-  const handleSelect = (roomId) => {
-    const room = rooms.find(r => r.id === roomId);
-    setSelectedRoom(roomId);
-    onRoomSelect(room);
-    navigate(`/booking/${roomId}`); // Add navigation
+  const handleSelect = (room) => {
+    setSelectedRoom(room.id);
+    navigate(`/book/${hostelId}/${room.id}`);
   };
 
-
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-4 text-gray-800">Select a Room</h2>
+    <div className="container mx-auto px-4 py-8">
+      <h2 className="text-2xl font-bold mb-6 text-gray-800">Available Rooms</h2>
       
       {rooms.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {rooms.map((room) => (
             <RoomCard
               key={room.id}
@@ -91,10 +86,10 @@ const RoomSelector = ({ rooms, onRoomSelect }) => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-8 bg-gray-50 rounded-lg">
+        <div className="text-center py-12 bg-gray-50 rounded-lg">
           <X className="w-12 h-12 mx-auto text-gray-300 mb-4" />
           <h3 className="text-lg font-medium text-gray-500">No rooms available</h3>
-          <p className="text-gray-400">Please try different dates</p>
+          <p className="text-gray-400">Please try different dates or check back later</p>
         </div>
       )}
     </div>
@@ -112,7 +107,7 @@ RoomSelector.propTypes = {
       price: PropTypes.number.isRequired
     })
   ).isRequired,
-  onRoomSelect: PropTypes.func.isRequired
+  hostelId: PropTypes.string.isRequired
 };
 
 export default RoomSelector;
