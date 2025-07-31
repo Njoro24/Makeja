@@ -42,7 +42,8 @@ ReviewItem.propTypes = {
   }).isRequired
 };
 
-const HostelReviews = ({ reviews }) => {
+const HostelReviews = ({ reviews: initialReviews }) => {
+  const [reviews, setReviews] = useState(initialReviews);
   const [showForm, setShowForm] = useState(false);
   const [newReview, setNewReview] = useState({
     rating: 5,
@@ -51,8 +52,18 @@ const HostelReviews = ({ reviews }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle review submission
+    // Create a new review object
+    const newReviewObj = {
+      user: "Current User", // In a real app, this would be the logged-in user's name
+      rating: newReview.rating,
+      date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+      comment: newReview.comment
+    };
+    // Add the new review to the list
+    setReviews([...reviews, newReviewObj]);
+    // Reset form and hide
     setShowForm(false);
+    setNewReview({ rating: 5, comment: '' });
   };
 
   return (
