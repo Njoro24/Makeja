@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { MapPin, Wifi, Utensils, Shield, Droplet, Tv, Users } from 'lucide-react';
+import HostelImages from './HostelImages'; // Import the HostelImages component
+import HostelReviews from './HostelReviews'; // Import the HostelReviews component
 
 const HostelDetails = ({ hostel }) => {
   const amenitiesIcons = {
@@ -25,6 +27,11 @@ const HostelDetails = ({ hostel }) => {
             ⭐ {hostel.rating} ({hostel.reviewsCount} reviews)
           </span>
         </div>
+      </div>
+
+      {/* Hostel Images */}
+      <div className="p-4">
+        <HostelImages images={hostel.images} />
       </div>
 
       {/* Details Grid */}
@@ -71,6 +78,11 @@ const HostelDetails = ({ hostel }) => {
           </ul>
         </div>
       </div>
+
+      {/* Reviews Section */}
+      <div className="p-4">
+        <HostelReviews reviews={hostel.reviews} />
+      </div>
     </div>
   );
 };
@@ -88,7 +100,21 @@ HostelDetails.propTypes = {
       shared: PropTypes.number.isRequired,
       deposit: PropTypes.number.isRequired
     }).isRequired,
-    rules: PropTypes.arrayOf(PropTypes.string).isRequired
+    rules: PropTypes.arrayOf(PropTypes.string).isRequired,
+    images: PropTypes.arrayOf(
+      PropTypes.shape({
+        thumbnail: PropTypes.string.isRequired,
+        full: PropTypes.string.isRequired
+      })
+    ).isRequired,
+    reviews: PropTypes.arrayOf(
+      PropTypes.shape({
+        user: PropTypes.string.isRequired,
+        rating: PropTypes.number.isRequired,
+        date: PropTypes.string.isRequired,
+        comment: PropTypes.string.isRequired
+      })
+    ).isRequired
   }).isRequired
 };
 
