@@ -5,6 +5,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import Header from './components/common/Header';
 import PaymentFailed from './components/payment/PaymentFailed';
 import EmailVerificationPage from './components/auth/EmailVerification';
+import HostelReviews from './components/hostel/HostelReviews';
 import './index.css';
 
 // Pages
@@ -12,10 +13,10 @@ import Home from './pages/Home';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MainLandingPage from './pages/MainLandingPage';
-import TestInput from './pages/TestInput';
-import HostelDetails from './components/hostel/HostelDetails'; 
-import ProfilePage from './pages/ProfilePage';// Add this import
-
+import HostelDetails from './components/hostel/HostelDetails';
+import ProfilePage from './pages/ProfilePage';
+import Dashboard from './pages/Dashboard';
+import Admpage from "./Admin/Admpage";
 
 function App() {
   return (
@@ -29,12 +30,13 @@ function App() {
               <Route path="/" element={<MainLandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
-              <Route path="/test" element={<TestInput />} />
+           
               <Route path="/payment-failed" element={<PaymentFailed />} />
-             <Route path="/verify-email" component={EmailVerificationPage} />
+              <Route path="/verify-email" element={<EmailVerificationPage />} />
 
+              {/* Fixed route - changed from /hostels/:id to /hostel/:id and using HostelDetail */}
               <Route
-                path="/hostels/:id"
+                path="/hostel/:id"
                 element={
                   <ProtectedRoute>
                     <HostelDetails />
@@ -42,7 +44,16 @@ function App() {
                 }
               />
 
-            
+              {/* Optional: Standalone reviews route */}
+              <Route
+                path="/hostel/:id/reviews"
+                element={
+                  <ProtectedRoute>
+                    <HostelReviews hostelId={window.location.pathname.split('/')[2]} />
+                  </ProtectedRoute>
+                }
+              />
+
               <Route
                 path="/home"
                 element={
@@ -61,20 +72,20 @@ function App() {
                 }
               />
 
-                <Route
-  path="/profile"
-  element={
-    <ProtectedRoute>
-      <ProfilePage />
-    </ProtectedRoute>
-  }
-/>
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
 
               <Route
                 path="/admin"
                 element={
                   <ProtectedRoute requiredRole="admin">
-                    <AdminDashboard />
+                    <Admpage />
                   </ProtectedRoute>
                 }
               />

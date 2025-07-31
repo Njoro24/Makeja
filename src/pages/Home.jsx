@@ -37,7 +37,6 @@ function Home() {
       try {
         setLoading(true);
         
-       
         await new Promise(resolve => setTimeout(resolve, 1000));
         
         // featured hostels data
@@ -119,11 +118,12 @@ function Home() {
     navigate(`/hostel/${hostelId}/book`);
   };
 
+  // Fixed handleViewDetails function
   const handleViewDetails = (hostelId) => {
+    console.log('Navigating to hostel details:', hostelId); // Debug log
     navigate(`/hostel/${hostelId}`);
   };
 
-  // Add logout handler
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -131,10 +131,10 @@ function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-slate-950">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4 text-white">Loading...</p>
         </div>
       </div>
     );
@@ -247,6 +247,9 @@ function Home() {
                     src={hostel.image}
                     alt={hostel.name}
                     className="w-full h-48 object-cover"
+                    onError={(e) => {
+                      e.target.src = 'https://via.placeholder.com/400x300?text=Hostel+Image';
+                    }}
                   />
                   <div className="absolute top-4 right-4 bg-blue-600/90 px-2 py-1 rounded-lg text-sm font-semibold text-white shadow-lg">
                     ⭐ {hostel.rating}
@@ -331,7 +334,7 @@ function Home() {
         </div>
       </section>
 
-      {/* Features Section - Enhanced for logged-in users */}
+      {/* Features Section */}
       <section className="py-16 bg-slate-950/90">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -347,121 +350,35 @@ function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {isAuthenticated ? (
-              // Enhanced features for logged-in users
-              <>
-                <div className="text-center p-6 bg-slate-800/70 rounded-lg border border-slate-700/50 shadow-lg">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">My Bookings</h3>
-                  <p className="text-blue-100 mb-4">View and manage all your current and past bookings</p>
-                  <Link to="/bookings" className="text-blue-400 hover:text-blue-200 font-medium">
-                    View Bookings →
-                  </Link>
-                </div>
+            <div className="text-center p-6 bg-slate-800/70 rounded-lg border border-slate-700/50 shadow-lg">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Smart Search</h3>
+              <p className="text-blue-100">Find hostels by location, price, gender preference, and amenities</p>
+            </div>
 
-                <div className="text-center p-6 bg-slate-800/70 rounded-lg border border-slate-700/50 shadow-lg">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">Favorites</h3>
-                  <p className="text-blue-100 mb-4">Save hostels you love and book them later</p>
-                  <Link to="/favorites" className="text-green-400 hover:text-green-200 font-medium">
-                    View Favorites →
-                  </Link>
-                </div>
+            <div className="text-center p-6 bg-slate-800/70 rounded-lg border border-slate-700/50 shadow-lg">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Verified Hostels</h3>
+              <p className="text-blue-100">All hostels are verified for safety, cleanliness, and quality</p>
+            </div>
 
-                <div className="text-center p-6 bg-slate-800/70 rounded-lg border border-slate-700/50 shadow-lg">
-                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">Profile</h3>
-                  <p className="text-blue-100 mb-4">Update your information and preferences</p>
-                  <Link to="/profile" className="text-purple-400 hover:text-purple-200 font-medium">
-                    Edit Profile →
-                  </Link>
-                </div>
-
-                <div className="text-center p-6 bg-slate-800/70 rounded-lg border border-slate-700/50 shadow-lg">
-                  <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">Payments</h3>
-                  <p className="text-blue-100 mb-4">Track payments and manage billing</p>
-                  <Link to="/payments" className="text-yellow-400 hover:text-yellow-200 font-medium">
-                    View Payments →
-                  </Link>
-                </div>
-
-                <div className="text-center p-6 bg-slate-800/70 rounded-lg border border-slate-700/50 shadow-lg">
-                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">Support</h3>
-                  <p className="text-blue-100 mb-4">Get help with bookings and account issues</p>
-                  <Link to="/support" className="text-red-400 hover:text-red-200 font-medium">
-                    Get Support →
-                  </Link>
-                </div>
-
-                <div className="text-center p-6 bg-slate-800/70 rounded-lg border border-slate-700/50 shadow-lg">
-                  <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">Dashboard</h3>
-                  <p className="text-blue-100 mb-4">Overview of your activity and quick actions</p>
-                  <Link to="/dashboard" className="text-indigo-400 hover:text-indigo-200 font-medium">
-                    Go to Dashboard →
-                  </Link>
-                </div>
-              </>
-            ) : (
-              // Basic features for non-logged-in users
-              <>
-                <div className="text-center p-6 bg-slate-800/70 rounded-lg border border-slate-700/50 shadow-lg">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">Smart Search</h3>
-                  <p className="text-blue-100">Find hostels by location, price, gender preference, and amenities</p>
-                </div>
-
-                <div className="text-center p-6 bg-slate-800/70 rounded-lg border border-slate-700/50 shadow-lg">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">Verified Hostels</h3>
-                  <p className="text-blue-100">All hostels are verified for safety, cleanliness, and quality</p>
-                </div>
-
-                <div className="text-center p-6 bg-slate-800/70 rounded-lg border border-slate-700/50 shadow-lg">
-                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">Secure Payments</h3>
-                  <p className="text-blue-100">Safe and secure payment processing with multiple options</p>
-                </div>
-              </>
-            )}
+            <div className="text-center p-6 bg-slate-800/70 rounded-lg border border-slate-700/50 shadow-lg">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Secure Payments</h3>
+              <p className="text-blue-100">Safe and secure payment processing with multiple options</p>
+            </div>
           </div>
         </div>
       </section>
