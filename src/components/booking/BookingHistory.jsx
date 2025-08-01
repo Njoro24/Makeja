@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Calendar, Home, MapPin, CheckCircle, XCircle, Clock } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 const statusConfig = {
   confirmed: {
@@ -19,18 +18,12 @@ const statusConfig = {
 };
 
 const BookingItem = ({ booking }) => {
-  const navigate = useNavigate();
-
-  const handleViewDetails = () => {
-    navigate(`/bookings/${booking.id}`);
-  };
-
   return (
     <div className="border border-gray-200 rounded-lg p-4 mb-4 hover:shadow-md transition-shadow">
       <div className="flex justify-between items-start mb-2">
         <h3 className="font-medium text-gray-800">{booking.hostelName}</h3>
-        <div className={`flex items-center ${statusConfig[booking.status]?.color || 'text-gray-600'}`}>
-          {statusConfig[booking.status]?.icon || <Clock className="w-4 h-4 text-gray-500" />}
+        <div className={`flex items-center ${statusConfig[booking.status].color}`}>
+          {statusConfig[booking.status].icon}
           <span className="ml-1 text-sm capitalize">{booking.status}</span>
         </div>
       </div>
@@ -48,12 +41,9 @@ const BookingItem = ({ booking }) => {
       <div className="flex justify-between items-center pt-2 border-t border-gray-100">
         <div>
           <span className="text-sm text-gray-500">Amount:</span>
-          <span className="ml-2 font-medium">Ksh {booking.amount?.toLocaleString() || '0'}</span>
+          <span className="ml-2 font-medium">Ksh {booking.amount.toLocaleString()}</span>
         </div>
-        <button 
-          onClick={handleViewDetails}
-          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-        >
+        <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
           View Details
         </button>
       </div>
@@ -68,8 +58,8 @@ BookingItem.propTypes = {
     location: PropTypes.string.isRequired,
     checkIn: PropTypes.string.isRequired,
     checkOut: PropTypes.string.isRequired,
-    status: PropTypes.oneOf(['confirmed', 'cancelled', 'pending', 'completed']),
-    amount: PropTypes.number
+    status: PropTypes.oneOf(['confirmed', 'cancelled', 'pending']).isRequired,
+    amount: PropTypes.number.isRequired
   }).isRequired
 };
 
@@ -78,7 +68,7 @@ const BookingHistory = ({ bookings }) => {
     <div className="bg-white rounded-lg shadow-sm p-6">
       <h2 className="text-xl font-bold mb-6 text-gray-800 border-b pb-2">Booking History</h2>
       
-      {bookings?.length > 0 ? (
+      {bookings.length > 0 ? (
         <div>
           {bookings.map((booking) => (
             <BookingItem key={booking.id} booking={booking} />
@@ -103,14 +93,10 @@ BookingHistory.propTypes = {
       location: PropTypes.string.isRequired,
       checkIn: PropTypes.string.isRequired,
       checkOut: PropTypes.string.isRequired,
-      status: PropTypes.string,
-      amount: PropTypes.number
+      status: PropTypes.string.isRequired,
+      amount: PropTypes.number.isRequired
     })
-  )
-};
-
-BookingHistory.defaultProps = {
-  bookings: []
+  ).isRequired
 };
 
 export default BookingHistory;
