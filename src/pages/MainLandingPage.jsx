@@ -128,7 +128,7 @@ const LandingPage = () => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // make actual API calls to your backend
+      // Here you would make actual API calls to your backend
       // const response = await fetch('/api/auth/login', { ... });
       
       if (authMode === 'signup') {
@@ -151,7 +151,7 @@ const LandingPage = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    
+    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -630,6 +630,7 @@ const LandingPage = () => {
                   <h3 className="text-lg font-semibold text-white mb-1">Office</h3>
                   <p className="text-gray-300">Nairobi, Kenya</p>
                 </div>
+                
               </div>
             </div>
             
@@ -669,6 +670,8 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
+        
+          
       </section>
 
       {/* Footer */}

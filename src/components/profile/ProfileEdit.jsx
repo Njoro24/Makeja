@@ -82,24 +82,22 @@ const ProfileEdit = ({ user, onSave }) => {
         <div>
           <label className="block mb-1">Hostel</label>
           <input
-            type="text"
-            name="hostel"
-            value={formData.hostel}
-            onChange={handleChange}
-            className="w-full p-2 rounded-md bg-[#1B263B] text-white border border-[#415A77]"
-          />
-        </div>
+   type="text"
+   name="hostel"
+   value={formData.hostel}
+   disabled
+   className="w-full p-2 rounded-md bg-gray-700 text-gray-400 border border-[#415A77] cursor-not-allowed"
+ /></div>
 
         <div>
           <label className="block mb-1">Room Number</label>
           <input
-            type="text"
-            name="roomNumber"
-            value={formData.roomNumber}
-            onChange={handleChange}
-            className="w-full p-2 rounded-md bg-[#1B263B] text-white border border-[#415A77]"
-          />
-        </div>
+   type="text"
+  name="roomNumber"
+   value={formData.roomNumber}
+  disabled
+   className="w-full p-2 rounded-md bg-gray-700 text-gray-400 border border-[#415A77] cursor-not-allowed"
+ /></div>
 
         <div>
           <label className="block mb-1">Profile Picture</label>
