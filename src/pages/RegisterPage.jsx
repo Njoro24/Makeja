@@ -149,7 +149,7 @@ const RegisterPage = () => {
       console.log('Sending registration data:', registrationData);
 
       // Register user with proper error handling and correct field names
-      const registerResponse = await fetch('makejabe-2.onrender.com/api/auth/register', {
+      const registerResponse = await fetch('https://makejabe-2.onrender.com/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
