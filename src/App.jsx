@@ -7,6 +7,8 @@ import PaymentFailed from './components/payment/PaymentFailed';
 import EmailVerificationPage from './components/auth/EmailVerification';
 import HostelReviews from './components/hostel/HostelReviews';
 import './index.css';
+import './services/auth';
+
 
 // Pages
 import Home from './pages/Home';
@@ -18,6 +20,7 @@ import HostelDetails from './components/hostel/HostelDetails';
 import MyBookingsPage from './pages/MyBookingsPage';
 import BookingPage from './pages/BookingPage';
 import HostRoomPage from './pages/HostRoomPage';
+import RoomDetailsPage from './pages/RoomDetailsPage'; 
 
 function App() {
   return (
@@ -25,17 +28,16 @@ function App() {
       <Router>
         <div className="min-h-screen bg-slate-950">
           <Header />
-
           <main className="container mx-auto px-4 py-8">
             <Routes>
               <Route path="/" element={<MainLandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/booking/:id" element={<BookingPage />} />
-
               <Route path="/test" element={<TestInput />} />
               <Route path="/payment-failed" element={<PaymentFailed />} />
               <Route path="/verify-email" element={<EmailVerificationPage />} />
+              <Route path="/rooms/:id" element={<RoomDetailsPage />} /> {}
 
               <Route
                 path="/home"

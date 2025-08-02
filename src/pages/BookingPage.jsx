@@ -1,14 +1,14 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { BedDouble, MapPin, ArrowRight, Users, Star, Heart, Filter, Search, Sparkles, Home, DollarSign, Calendar, Eye } from 'lucide-react'
 
-// Sample data - replace with your API call
+// Expanded sample data with monthly pricing
 const sampleRooms = [
   {
     id: 1,
     name: "Luxury Downtown Apartment",
     location: "Westlands, Nairobi",
-    price: 4500,
+    price: 135000,
     capacity: 4,
     category: "Apartment",
     rating: 4.8,
@@ -22,7 +22,7 @@ const sampleRooms = [
     id: 2,
     name: "Cozy Studio Near CBD",
     location: "Upper Hill, Nairobi",
-    price: 2800,
+    price: 84000,
     capacity: 2,
     category: "Studio",
     rating: 4.6,
@@ -36,7 +36,7 @@ const sampleRooms = [
     id: 3,
     name: "Student Friendly Bedsitter",
     location: "Kileleshwa, Nairobi",
-    price: 1500,
+    price: 45000,
     capacity: 2,
     category: "Bedsitter",
     rating: 4.4,
@@ -50,7 +50,7 @@ const sampleRooms = [
     id: 4,
     name: "Executive Penthouse Suite",
     location: "Karen, Nairobi",
-    price: 8500,
+    price: 255000,
     capacity: 6,
     category: "Apartment",
     rating: 4.9,
@@ -59,18 +59,299 @@ const sampleRooms = [
     description: "Luxury living with premium amenities",
     amenities: ["Pool", "Gym", "Garden", "Parking"],
     isPremium: true
+  },
+  {
+    id: 5,
+    name: "Modern Single Room",
+    location: "Kasarani, Nairobi",
+    price: 18000,
+    capacity: 1,
+    category: "Single Room",
+    rating: 4.2,
+    reviews: 34,
+    image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&h=300&fit=crop",
+    description: "Perfect for young professionals",
+    amenities: ["WiFi", "Shared Kitchen", "Security"],
+    isNew: false
+  },
+  {
+    id: 6,
+    name: "University Hostel Room",
+    location: "Kikuyu, Kiambu",
+    price: 12000,
+    capacity: 2,
+    category: "Hostel",
+    rating: 4.0,
+    reviews: 78,
+    image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&h=300&fit=crop",
+    description: "Affordable accommodation for students",
+    amenities: ["WiFi", "Study Area", "Laundry"],
+    isPopular: false
+  },
+  {
+    id: 7,
+    name: "Garden View Bedsitter",
+    location: "Lavington, Nairobi",
+    price: 55000,
+    capacity: 2,
+    category: "Bedsitter",
+    rating: 4.5,
+    reviews: 92,
+    image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop",
+    description: "Serene environment with beautiful gardens",
+    amenities: ["Garden", "WiFi", "Parking"],
+    isPremium: false
+  },
+  {
+    id: 8,
+    name: "Two Bedroom Family Apartment",
+    location: "Embakasi, Nairobi",
+    price: 65000,
+    capacity: 5,
+    category: "Apartment",
+    rating: 4.3,
+    reviews: 145,
+    image: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=400&h=300&fit=crop",
+    description: "Spacious family-friendly accommodation",
+    amenities: ["Kitchen", "WiFi", "Playground"],
+    isNew: false
+  },
+  {
+    id: 9,
+    name: "Executive Studio",
+    location: "Kilimani, Nairobi",
+    price: 95000,
+    capacity: 2,
+    category: "Studio",
+    rating: 4.7,
+    reviews: 67,
+    image: "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=400&h=300&fit=crop",
+    description: "Modern studio with all amenities",
+    amenities: ["Gym", "Pool", "WiFi", "Kitchen"],
+    isPremium: true
+  },
+  {
+    id: 10,
+    name: "Budget Single Room",
+    location: "Githurai, Nairobi",
+    price: 15000,
+    capacity: 1,
+    category: "Single Room",
+    rating: 3.9,
+    reviews: 23,
+    image: "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=400&h=300&fit=crop",
+    description: "Affordable option for budget-conscious tenants",
+    amenities: ["Basic Furniture", "Shared Bathroom"],
+    isNew: false
+  },
+  {
+    id: 11,
+    name: "Furnished Bedsitter",
+    location: "Kahawa West, Nairobi",
+    price: 35000,
+    capacity: 2,
+    category: "Bedsitter",
+    rating: 4.1,
+    reviews: 41,
+    image: "https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=400&h=300&fit=crop",
+    description: "Fully furnished and move-in ready",
+    amenities: ["Furnished", "WiFi", "Water"],
+    isPopular: false
+  },
+  {
+    id: 12,
+    name: "Luxury Three Bedroom",
+    location: "Runda, Nairobi",
+    price: 180000,
+    capacity: 6,
+    category: "Apartment",
+    rating: 4.8,
+    reviews: 156,
+    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=300&fit=crop",
+    description: "Premium location with top-tier amenities",
+    amenities: ["Pool", "Garden", "Security", "Parking"],
+    isPremium: true
+  },
+  {
+    id: 13,
+    name: "Student Hostel - Shared",
+    location: "USIU, Nairobi",
+    price: 8000,
+    capacity: 4,
+    category: "Hostel",
+    rating: 3.8,
+    reviews: 112,
+    image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&h=300&fit=crop",
+    description: "Shared accommodation for university students",
+    amenities: ["Study Room", "WiFi", "Common Kitchen"],
+    isNew: false
+  },
+  {
+    id: 14,
+    name: "Modern Studio Apartment",
+    location: "Hurlingham, Nairobi",
+    price: 110000,
+    capacity: 2,
+    category: "Studio",
+    rating: 4.6,
+    reviews: 89,
+    image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&h=300&fit=crop",
+    description: "Contemporary design with modern fixtures",
+    amenities: ["AC", "WiFi", "Kitchen", "Parking"],
+    isPopular: true
+  },
+  {
+    id: 15,
+    name: "Spacious Single Room",
+    location: "Roysambu, Nairobi",
+    price: 25000,
+    capacity: 1,
+    category: "Single Room",
+    rating: 4.0,
+    reviews: 56,
+    image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop",
+    description: "Well-lit single room with good ventilation",
+    amenities: ["WiFi", "Security", "Shared Kitchen"],
+    isNew: false
+  },
+  {
+    id: 16,
+    name: "Premium Bedsitter",
+    location: "Parklands, Nairobi",
+    price: 70000,
+    capacity: 2,
+    category: "Bedsitter",
+    rating: 4.4,
+    reviews: 73,
+    image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop",
+    description: "High-end bedsitter in prime location",
+    amenities: ["Kitchen", "WiFi", "Parking", "Security"],
+    isPremium: true
+  },
+  {
+    id: 17,
+    name: "One Bedroom Apartment",
+    location: "South B, Nairobi",
+    price: 45000,
+    capacity: 3,
+    category: "Apartment",
+    rating: 4.2,
+    reviews: 98,
+    image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop",
+    description: "Comfortable one-bedroom with balcony",
+    amenities: ["Balcony", "Kitchen", "WiFi"],
+    isNew: false
+  },
+  {
+    id: 18,
+    name: "Executive Hostel Room",
+    location: "KU, Nairobi",
+    price: 20000,
+    capacity: 2,
+    category: "Hostel",
+    rating: 4.3,
+    reviews: 67,
+    image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&h=300&fit=crop",
+    description: "Upgraded hostel accommodation",
+    amenities: ["Private Bathroom", "WiFi", "Study Desk"],
+    isPopular: false
+  },
+  {
+    id: 19,
+    name: "Loft Studio",
+    location: "Gigiri, Nairobi",
+    price: 130000,
+    capacity: 3,
+    category: "Studio",
+    rating: 4.7,
+    reviews: 45,
+    image: "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=400&h=300&fit=crop",
+    description: "Unique loft-style studio with high ceilings",
+    amenities: ["High Ceilings", "Modern Kitchen", "WiFi"],
+    isNew: true
+  },
+  {
+    id: 20,
+    name: "Shared Single Room",
+    location: "Pipeline, Nairobi",
+    price: 12500,
+    capacity: 1,
+    category: "Single Room",
+    rating: 3.7,
+    reviews: 29,
+    image: "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=400&h=300&fit=crop",
+    description: "Affordable shared accommodation",
+    amenities: ["Shared Facilities", "Security"],
+    isNew: false
+  },
+  {
+    id: 21,
+    name: "Deluxe Bedsitter",
+    location: "Ngong Road, Nairobi",
+    price: 48000,
+    capacity: 2,
+    category: "Bedsitter",
+    rating: 4.3,
+    reviews: 84,
+    image: "https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=400&h=300&fit=crop",
+    description: "Well-appointed bedsitter with modern amenities",
+    amenities: ["Kitchen", "WiFi", "Water", "Parking"],
+    isPopular: false
+  },
+  {
+    id: 22,
+    name: "Four Bedroom House",
+    location: "Kileleshwa, Nairobi",
+    price: 220000,
+    capacity: 8,
+    category: "Apartment",
+    rating: 4.9,
+    reviews: 78,
+    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=300&fit=crop",
+    description: "Spacious family house with compound",
+    amenities: ["Garden", "Parking", "Security", "Kitchen"],
+    isPremium: true
+  },
+  {
+    id: 23,
+    name: "Girls Hostel Room",
+    location: "Kikuyu, Kiambu",
+    price: 15000,
+    capacity: 2,
+    category: "Hostel",
+    rating: 4.1,
+    reviews: 156,
+    image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&h=300&fit=crop",
+    description: "Safe and secure accommodation for female students",
+    amenities: ["24/7 Security", "WiFi", "Common Area"],
+    isNew: false
+  },
+  {
+    id: 24,
+    name: "Premium Studio",
+    location: "Kilimani, Nairobi",
+    price: 125000,
+    capacity: 2,
+    category: "Studio",
+    rating: 4.8,
+    reviews: 92,
+    image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&h=300&fit=crop",
+    description: "High-end studio with premium finishes",
+    amenities: ["Premium Finishes", "Gym", "Pool", "WiFi"],
+    isPremium: true
   }
 ]
 
 const categories = ['All', 'Apartment', 'Bedsitter', 'Single Room', 'Studio', 'Hostel']
 
 const BookingsPage = () => {
+  const navigate = useNavigate()
   const [rooms, setRooms] = useState([])
   const [filteredRooms, setFilteredRooms] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchTerm, setSearchTerm] = useState('')
-  const [priceRange, setPriceRange] = useState([0, 10000])
+  const [priceRange, setPriceRange] = useState([0, 300000])
   const [showFilters, setShowFilters] = useState(false)
   const [favoriteRooms, setFavoriteRooms] = useState(new Set())
   const [viewMode, setViewMode] = useState('grid') // 'grid' or 'list'
@@ -117,7 +398,8 @@ const BookingsPage = () => {
     setFilteredRooms(filtered)
   }, [rooms, selectedCategory, searchTerm, priceRange])
 
-  const toggleFavorite = (roomId) => {
+  const toggleFavorite = (roomId, e) => {
+    e.stopPropagation()
     const newFavorites = new Set(favoriteRooms)
     if (newFavorites.has(roomId)) {
       newFavorites.delete(roomId)
@@ -140,106 +422,120 @@ const BookingsPage = () => {
     </div>
   )
 
-  const RoomCard = ({ room }) => (
-    <div className="group bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden hover:scale-[1.02] hover:bg-white/10 transition-all duration-500 shadow-2xl">
-      <div className="relative overflow-hidden">
-        <img
-          src={room.image}
-          alt={room.name}
-          className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700"
-        />
-        
-        {/* Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-        
-        {/* Badges */}
-        <div className="absolute top-4 left-4 flex gap-2">
-          {room.isNew && (
-            <span className="bg-[#00C2AB] text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
-              <Sparkles className="w-3 h-3" />
-              New
-            </span>
-          )}
-          {room.isPopular && (
-            <span className="bg-[#FF6B35] text-white px-3 py-1 rounded-full text-xs font-semibold">
-              🔥 Popular
-            </span>
-          )}
-          {room.isPremium && (
-            <span className="bg-gradient-to-r from-[#6A11CB] to-[#2575FC] text-white px-3 py-1 rounded-full text-xs font-semibold">
-              ✨ Premium
-            </span>
-          )}
-        </div>
+  const RoomCard = ({ room }) => {
+    const handleRoomClick = () => {
+      navigate(`/rooms/${room.id}`)
+    }
 
-        {/* Favorite Button */}
-        <button
-          onClick={() => toggleFavorite(room.id)}
-          className="absolute top-4 right-4 p-2 bg-black/30 backdrop-blur rounded-full hover:bg-black/50 transition-colors"
-        >
-          <Heart 
-            className={`w-5 h-5 transition-colors ${
-              favoriteRooms.has(room.id) ? 'fill-[#FF3366] text-[#FF3366]' : 'text-white'
-            }`}
+    const handleBookNowClick = (e) => {
+      e.stopPropagation()
+      // Your booking logic here
+    }
+
+    return (
+      <div 
+        className="group bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden hover:scale-[1.02] hover:bg-white/10 transition-all duration-500 shadow-2xl cursor-pointer"
+        onClick={handleRoomClick}
+      >
+        <div className="relative overflow-hidden">
+          <img
+            src={room.image}
+            alt={room.name}
+            className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700"
           />
-        </button>
+          
+          {/* Overlays */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          
+          {/* Badges */}
+          <div className="absolute top-4 left-4 flex gap-2">
+            {room.isNew && (
+              <span className="bg-[#00C2AB] text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+                <Sparkles className="w-3 h-3" />
+                New
+              </span>
+            )}
+            {room.isPopular && (
+              <span className="bg-[#FF6B35] text-white px-3 py-1 rounded-full text-xs font-semibold">
+                🔥 Popular
+              </span>
+            )}
+            {room.isPremium && (
+              <span className="bg-gradient-to-r from-[#6A11CB] to-[#2575FC] text-white px-3 py-1 rounded-full text-xs font-semibold">
+                ✨ Premium
+              </span>
+            )}
+          </div>
 
-        {/* Price */}
-        <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur text-black px-3 py-1 rounded-full font-bold">
-          KES {room.price.toLocaleString()}/night
+          {/* Favorite Button */}
+          <button
+            onClick={(e) => toggleFavorite(room.id, e)}
+            className="absolute top-4 right-4 p-2 bg-black/30 backdrop-blur rounded-full hover:bg-black/50 transition-colors"
+          >
+            <Heart 
+              className={`w-5 h-5 transition-colors ${
+                favoriteRooms.has(room.id) ? 'fill-[#FF3366] text-[#FF3366]' : 'text-white'
+              }`}
+            />
+          </button>
+
+          {/* Price */}
+          <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur text-black px-3 py-1 rounded-full font-bold">
+            KSH {room.price.toLocaleString()}/month
+          </div>
+        </div>
+
+        <div className="p-6">
+          <div className="flex items-start justify-between gap-4 mb-3">
+            <h3 className="text-xl font-bold text-white group-hover:text-[#00C2AB] transition-colors line-clamp-2">
+              {room.name}
+            </h3>
+            <div className="flex items-center gap-1 bg-[#FFD166]/20 px-2 py-1 rounded-full">
+              <Star className="w-4 h-4 fill-[#FFD166] text-[#FFD166]" />
+              <span className="text-sm font-semibold text-[#FFD166]">{room.rating}</span>
+            </div>
+          </div>
+
+          <p className="text-gray-300 flex items-center gap-2 mb-3">
+            <MapPin className="w-4 h-4 text-[#00C2AB]" />
+            {room.location}
+          </p>
+
+          <p className="text-gray-400 text-sm mb-4 line-clamp-2">{room.description}</p>
+
+          <div className="flex items-center gap-4 mb-4 text-sm text-gray-300">
+            <div className="flex items-center gap-1">
+              <Users className="w-4 h-4" />
+              {room.capacity} guests
+            </div>
+            <div className="flex items-center gap-1">
+              <Eye className="w-4 h-4" />
+              {room.reviews} reviews
+            </div>
+          </div>
+
+          {/* Amenities */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            {room.amenities.slice(0, 3).map((amenity, index) => (
+              <span key={index} className="bg-[#00C2AB]/20 text-[#00C2AB] px-2 py-1 rounded-full text-xs">
+                {amenity}
+              </span>
+            ))}
+          </div>
+
+          <div className="flex gap-3">
+            <button 
+              className="flex-1 bg-gradient-to-r from-[#00C2AB] to-[#2575FC] hover:from-[#00A693] hover:to-[#1A5BC2] text-white px-4 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2"
+              onClick={handleBookNowClick}
+            >
+              <Calendar className="w-4 h-4" />
+              Book Now
+            </button>
+          </div>
         </div>
       </div>
-
-      <div className="p-6">
-        <div className="flex items-start justify-between gap-4 mb-3">
-          <h3 className="text-xl font-bold text-white group-hover:text-[#00C2AB] transition-colors line-clamp-2">
-            {room.name}
-          </h3>
-          <div className="flex items-center gap-1 bg-[#FFD166]/20 px-2 py-1 rounded-full">
-            <Star className="w-4 h-4 fill-[#FFD166] text-[#FFD166]" />
-            <span className="text-sm font-semibold text-[#FFD166]">{room.rating}</span>
-          </div>
-        </div>
-
-        <p className="text-gray-300 flex items-center gap-2 mb-3">
-          <MapPin className="w-4 h-4 text-[#00C2AB]" />
-          {room.location}
-        </p>
-
-        <p className="text-gray-400 text-sm mb-4 line-clamp-2">{room.description}</p>
-
-        <div className="flex items-center gap-4 mb-4 text-sm text-gray-300">
-          <div className="flex items-center gap-1">
-            <Users className="w-4 h-4" />
-            {room.capacity} guests
-          </div>
-          <div className="flex items-center gap-1">
-            <Eye className="w-4 h-4" />
-            {room.reviews} reviews
-          </div>
-        </div>
-
-        {/* Amenities */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {room.amenities.slice(0, 3).map((amenity, index) => (
-            <span key={index} className="bg-[#00C2AB]/20 text-[#00C2AB] px-2 py-1 rounded-full text-xs">
-              {amenity}
-            </span>
-          ))}
-        </div>
-
-        <div className="flex gap-3">
-          <button className="flex-1 bg-gradient-to-r from-[#00C2AB] to-[#2575FC] hover:from-[#00A693] hover:to-[#1A5BC2] text-white px-4 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2">
-            <Calendar className="w-4 h-4" />
-            Book Now
-          </button>
-          <button className="px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors">
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-    </div>
-  )
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#121212] via-[#1A1A2E] to-[#16213E] text-white relative overflow-hidden">
@@ -316,15 +612,15 @@ const BookingsPage = () => {
                   <input
                     type="range"
                     min="0"
-                    max="10000"
-                    step="500"
+                    max="300000"
+                    step="5000"
                     value={priceRange[1]}
                     onChange={(e) => setPriceRange([0, parseInt(e.target.value)])}
                     className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#00C2AB]"
                   />
                 </div>
                 <span className="text-sm text-gray-300 whitespace-nowrap">
-                  KES 0 - {priceRange[1].toLocaleString()}
+                  KSH 0 - {priceRange[1].toLocaleString()}
                 </span>
               </div>
             </div>
@@ -360,7 +656,7 @@ const BookingsPage = () => {
                 onClick={() => {
                   setSelectedCategory('All')
                   setSearchTerm('')
-                  setPriceRange([0, 10000])
+                  setPriceRange([0, 300000])
                 }}
                 className="bg-[#00C2AB] hover:bg-[#00A693] px-6 py-3 rounded-xl transition-colors"
               >
@@ -378,8 +674,8 @@ const BookingsPage = () => {
           {/* Stats Section */}
           <div className="mt-20 grid md:grid-cols-4 gap-8">
             {[
-              { number: '50K+', label: 'Happy Guests', icon: '😊' },
-              { number: '2K+', label: 'Properties', icon: '' },
+              { number: '50K+', label: 'Happy Tenants', icon: '😊' },
+              { number: '2K+', label: 'Properties', icon: '🏠' },
               { number: '500+', label: 'Verified Hosts', icon: '✅' },
               { number: '4.8', label: 'Average Rating', icon: '⭐' }
             ].map((stat, i) => (

@@ -1,207 +1,215 @@
-// Authentication service for handling user auth operations
+// auth.js - Comprehensive Authentication Service with Debugging
+
 class AuthService {
   constructor() {
-    this.baseURL = 'https://makejabe-2.onrender.com/api',
+    this.baseURL = 'http://localhost:5000/api';
     this.token = this.getStoredToken();
+    console.log('[AuthService] Initialized. Token exists:', !!this.token);
   }
 
-  // Get token from localStorage
+  // ==================== TOKEN MANAGEMENT ====================
   getStoredToken() {
-    return localStorage.getItem('authToken');
+    const token = localStorage.getItem('authToken');
+    console.log('[AuthService] Retrieved token from localStorage:', token ? '***' + token.slice(-10) : 'NULL');
+    return token;
   }
 
-  // Store token in localStorage
   setToken(token) {
+    console.groupCollapsed('[AuthService] Setting token');
+    console.log('Raw token received:', token);
+    console.log('Token type:', typeof token);
+    
+    if (!token) {
+      console.warn('Attempted to set empty token!');
+      console.groupEnd();
+      return;
+    }
+
     this.token = token;
     localStorage.setItem('authToken', token);
+    console.log('Token stored successfully. Length:', token.length);
+    console.log('Sample:', token.slice(0, 10) + '...' + token.slice(-10));
+    console.groupEnd();
+    return true;
   }
 
-  // Remove token from localStorage
   removeToken() {
+    console.log('[AuthService] Clearing token. Previous token existed:', !!this.token);
     this.token = null;
     localStorage.removeItem('authToken');
+    console.log('Token cleared successfully');
   }
 
-  // Check if user is authenticated
+  // ==================== AUTH STATE ====================
   isAuthenticated() {
-    return !!this.token;
+    const valid = !!this.token;
+    console.log(`[AuthService] Authentication check: ${valid ? 'VALID' : 'INVALID'}`);
+    return valid;
   }
 
-  // Get current user info from token
   getCurrentUser() {
-    if (!this.token) return null;
+    if (!this.token) {
+      console.warn('[AuthService] No token available for user decoding');
+      return null;
+    }
     
     try {
       const payload = JSON.parse(atob(this.token.split('.')[1]));
+      console.log('[AuthService] Decoded token payload:', payload);
       return payload;
     } catch (error) {
-      console.error('Invalid token format:', error);
+      console.error('[AuthService] Token decoding failed:', error);
       this.removeToken();
       return null;
     }
   }
 
-  // Login user
+  // ==================== AUTH OPERATIONS ====================
   async login(email, password) {
+    console.group('[AuthService] Login attempt for:', email);
     try {
       const response = await fetch(`${this.baseURL}/auth/login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
+      const res = await response.json();
+      console.log('API Response:', res);
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
+      // Response validation
+      if (!res || typeof res !== 'object') {
+        throw new Error('Invalid response format');
       }
 
-      this.setToken(data.token);
-      return { success: true, user: data.user };
+      if (!response.ok) {
+        console.error('Login failed:', res.message);
+        throw new Error(res.message || 'Login failed');
+      }
+
+      const token = res.access_token;  // Corrected line
+      
+      if (!token) {
+        console.error('No token in response! Full response:', res);
+        throw new Error('Authentication token missing');
+      }
+
+      this.setToken(token);
+      console.log('Login successful. User:', res.user?.email);
+      return { success: true, user: res.user };
     } catch (error) {
       console.error('Login error:', error);
-      return { success: false, error: error.message };
+      return { 
+        success: false, 
+        error: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      };
+    } finally {
+      console.groupEnd();
     }
   }
 
-  // Register new user
   async register(userData) {
+    console.group('[AuthService] Registration attempt');
     try {
       const response = await fetch(`${this.baseURL}/auth/register`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
       });
 
-      const data = await response.json();
+      const res = await response.json();
+      console.log('Registration response:', res);
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Registration failed');
+      // Response validation
+      if (!res || typeof res !== 'object') {
+        throw new Error('Invalid response format');
       }
 
-      this.setToken(data.token);
-      return { success: true, user: data.user };
+      if (!response.ok) {
+        console.error('Registration failed:', res.errors);
+        throw new Error(res.message || 'Registration failed');
+      }
+
+      const token = res.access_token;  // Corrected line
+      this.setToken(token);
+      console.log('Registration successful');
+      return { success: true, user: res.user };
     } catch (error) {
       console.error('Registration error:', error);
       return { success: false, error: error.message };
+    } finally {
+      console.groupEnd();
     }
   }
 
-  // Logout user
   logout() {
+    console.log('[AuthService] Initiating logout');
     this.removeToken();
     return { success: true };
   }
 
-  // Get authorization headers for API calls
+  // ==================== API COMMUNICATION ====================
   getAuthHeaders() {
-    return {
-      'Authorization': `Bearer ${this.token}`,
+    const headers = {
       'Content-Type': 'application/json',
+      ...(this.token && { 'Authorization': `Bearer ${this.token}` })
     };
+    console.debug('Generated headers:', headers);
+    return headers;
   }
 
-  // Make authenticated API call
   async apiCall(endpoint, options = {}) {
-    const url = `${this.baseURL}${endpoint}`;
-    const config = {
-      headers: this.getAuthHeaders(),
-      ...options,
-    };
-
+    console.group(`[AuthService] API call to ${endpoint}`);
     try {
-      const response = await fetch(url, config);
-      
-      if (response.status === 401) {
-        this.logout();
-        throw new Error('Session expired');
-      }
-
-      return response;
-    } catch (error) {
-      console.error('API call error:', error);
-      throw error;
-    }
-  }
-
-  // Refresh token
-  async refreshToken() {
-    try {
-      const response = await fetch(`${this.baseURL}/auth/refresh`, {
-        method: 'POST',
+      const response = await fetch(`${this.baseURL}${endpoint}`, {
+        ...options,
         headers: this.getAuthHeaders(),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Token refresh failed');
+      console.log('API response status:', response.status);
+      
+      if (response.status === 401) {
+        console.warn('Authentication expired');
+        this.logout();
+        window.location.reload(); // Force refresh to reset state
+        throw new Error('Session expired');
       }
 
-      this.setToken(data.token);
-      return { success: true };
+      return await response.json();
     } catch (error) {
-      console.error('Token refresh error:', error);
-      this.logout();
-      return { success: false, error: error.message };
+      console.error('API call failed:', error);
+      throw error;
+    } finally {
+      console.groupEnd();
     }
   }
 
-  // Forgot password
+  // ==================== PASSWORD MANAGEMENT ====================
   async forgotPassword(email) {
-    try {
-      const response = await fetch(`${this.baseURL}/auth/forgot-password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Password reset request failed');
-      }
-
-      return { success: true, message: data.message };
-    } catch (error) {
-      console.error('Forgot password error:', error);
-      return { success: false, error: error.message };
-    }
+    console.log('[AuthService] Password reset request for:', email);
+    return this.apiCall('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
   }
 
-  // Reset password
   async resetPassword(token, newPassword) {
-    try {
-      const response = await fetch(`${this.baseURL}/auth/reset-password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token, password: newPassword }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Password reset failed');
-      }
-
-      return { success: true, message: data.message };
-    } catch (error) {
-      console.error('Reset password error:', error);
-      return { success: false, error: error.message };
-    }
+    console.log('[AuthService] Attempting password reset');
+    return this.apiCall('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, password: newPassword }),
+    });
   }
 }
 
-// Create and export instance
-export const authService = new AuthService();
+// Singleton instance
+const authService = new AuthService();
 
-// Also export the class for testing purposes
-export { AuthService };
+// For testing/development only
+if (typeof window !== 'undefined') {
+  window.__authService = authService;
+  console.log('[AuthService] Debug instance available at window.__authService');
+}
+
+export { authService, AuthService };
