@@ -1,17 +1,58 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Home } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated, user, logout } = useAuth();
+
+  // Handle scrolling when navigating with state
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      const timer = setTimeout(() => {
+        const element = document.getElementById(location.state.scrollTo);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100); 
+      
+      // Clear the state after scrolling
+      window.history.replaceState({}, document.title);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [location]);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      console.log(`Section with ID "${sectionId}" not found`);
     }
+  };
+
+  const handleNavigation = (sectionId) => {
+   
+    if (window.location.pathname === '/') {
+      scrollToSection(sectionId);
+    } else {
+      
+      navigate('/', { state: { scrollTo: sectionId } });
+    }
+  };
+
+  const handleHomeClick = () => {
+    if (window.location.pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/');
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
   return (
@@ -27,36 +68,62 @@ const Header = () => {
             </span>
           </div>
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-gray-300 hover:text-purple-200 transition-all duration-300 hover:scale-110 relative group hover:drop-shadow-lg">
+            <Link to="/" onClick={handleHomeClick} className="text-gray-300 hover:text-purple-200 transition-all duration-300 hover:scale-110 relative group hover:drop-shadow-lg">
               Home
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-violet-500 transition-all duration-300 group-hover:w-full shadow-lg shadow-purple-500/50"></span>
             </Link>
-            <button onClick={() => scrollToSection('home')} className="text-gray-300 hover:text-purple-200 transition-all duration-300 hover:scale-110 relative group hover:drop-shadow-lg">
+            <button onClick={() => handleNavigation('about')} className="text-gray-300 hover:text-purple-200 transition-all duration-300 hover:scale-110 relative group hover:drop-shadow-lg">
               About
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-violet-500 transition-all duration-300 group-hover:w-full shadow-lg shadow-purple-500/50"></span>
             </button>
-            <button onClick={() => scrollToSection('featured-hostels')} className="text-gray-300 hover:text-purple-200 transition-all duration-300 hover:scale-110 relative group hover:drop-shadow-lg">
+            <button onClick={() => handleNavigation('featured')} className="text-gray-300 hover:text-purple-200 transition-all duration-300 hover:scale-110 relative group hover:drop-shadow-lg">
               <span className="bg-gradient-to-r from-purple-300 to-violet-300 bg-clip-text text-transparent font-medium">Browse Hostels</span>
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-violet-500 transition-all duration-300 group-hover:w-full shadow-lg shadow-purple-500/50"></span>
             </button>
-            <button onClick={() => scrollToSection('contact-section')} className="text-gray-300 hover:text-purple-200 transition-all duration-300 hover:scale-110 relative group hover:drop-shadow-lg">
+            <button onClick={() => handleNavigation('contact')} className="text-gray-300 hover:text-purple-200 transition-all duration-300 hover:scale-110 relative group hover:drop-shadow-lg">
               Contact
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-violet-500 transition-all duration-300 group-hover:w-full shadow-lg shadow-purple-500/50"></span>
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-violet-500 transition-all duration-300 group-hover:w-full shadow-lg shadow-purple-500/50"></span>  
             </button>
           </div>
+          
+          {/* Conditional rendering based on authentication state */}
           <div className="flex items-center space-x-4">
-            <button 
-              onClick={() => navigate('/login')}
-              className="px-6 py-2 bg-slate-800/80 backdrop-blur-sm text-white rounded-xl hover:bg-slate-700/80 transition-all duration-300 hover:scale-110 hover:shadow-xl shadow-purple-500/20 border border-purple-500/30 hover:border-purple-400/50"
-            >
-              Login
-            </button>
-            <button 
-              onClick={() => navigate('/register')}
-              className="px-6 py-2 bg-gradient-to-r from-purple-600 via-violet-600 to-purple-600 text-white rounded-xl hover:from-purple-500 hover:via-violet-500 hover:to-purple-500 transition-all duration-300 hover:scale-110 hover:shadow-2xl shadow-purple-500/40"
-            >
-              Sign Up
-            </button>
+            {isAuthenticated ? (
+              // Show user menu when logged in
+              <>
+                <Link 
+                  to="/dashboard"
+                  className="px-6 py-2 bg-slate-800/80 backdrop-blur-sm text-white rounded-xl hover:bg-slate-700/80 transition-all duration-300 hover:scale-110 hover:shadow-xl shadow-purple-500/20 border border-purple-500/30 hover:border-purple-400/50"
+                >
+                  Dashboard
+                </Link>
+                <div className="text-gray-300 text-sm hidden sm:block">
+                  Hi, {user?.firstName || user?.first_name || user?.name || user?.email || 'User'}
+                </div>
+                <button 
+                  onClick={handleLogout}
+                  className="px-6 py-2 bg-gradient-to-r from-red-600 via-red-600 to-red-600 text-white rounded-xl hover:from-red-500 hover:via-red-500 hover:to-red-500 transition-all duration-300 hover:scale-110 hover:shadow-2xl shadow-red-500/40"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              // Show login/signup when not logged in
+              <>
+                <button 
+                  onClick={() => navigate('/login')}
+                  className="px-6 py-2 bg-slate-800/80 backdrop-blur-sm text-white rounded-xl hover:bg-slate-700/80 transition-all duration-300 hover:scale-110 hover:shadow-xl shadow-purple-500/20 border border-purple-500/30 hover:border-purple-400/50"
+                >
+                  Login
+                </button>
+                <button 
+                  onClick={() => navigate('/register')}
+                  className="px-6 py-2 bg-gradient-to-r from-purple-600 via-violet-600 to-purple-600 text-white rounded-xl hover:from-purple-500 hover:via-violet-500 hover:to-purple-500 transition-all duration-300 hover:scale-110 hover:shadow-2xl shadow-purple-500/40"
+                >
+                  Sign Up
+                </button>
+              </>
+            )}
           </div>
         </div>
       </nav>

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { 
   Home, 
   Eye,
   EyeOff,
   Lock,
-  User,
   Mail,
   CheckCircle,
   AlertCircle,
@@ -16,26 +16,24 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [notification, setNotification] = useState({ show: false, message: '', type: '' });
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login, isAuthenticated } = useAuth();
+  const hasNavigated = useRef(false);
 
-  // Auto-focus the email input when component mounts
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     const emailInput = document.querySelector('input[name="email"]');
-  //     if (emailInput) {
-  //       emailInput.focus();
-  //       emailInput.click();
-  //     }
-  //   }, 100);
-    
-  //   return () => clearTimeout(timer);
-  // }, []);
+  // Redirect if already authenticated - FIXED: Prevent multiple navigations
+  useEffect(() => {
+    if (isAuthenticated && !hasNavigated.current) {
+      hasNavigated.current = true;
+      const from = location.state?.from?.pathname || '/home';
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location.state?.from?.pathname]);
 
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type });
@@ -63,22 +61,6 @@ const LoginPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Mock authentication function
-  const authenticateUser = async (credentials) => {
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-  
-  
-    
-    // Or allow any valid email format with password 6+ chars
-    if (/\S+@\S+\.\S+/.test(credentials.email) && credentials.password.length >= 6) {
-      return { success: true, user: { email: credentials.email, name: 'User' } };
-    }
-    
-    return { success: false, error: 'Invalid email or password' };
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -87,22 +69,20 @@ const LoginPage = () => {
     setIsLoading(true);
     
     try {
-      const result = await authenticateUser(formData);
+      // Use your auth context login method
+      const result = await login({ email: formData.email, password: formData.password });
       
       if (result.success) {
         showNotification('Welcome back to Makeja!', 'success');
+       
         
-        // Simulate successful login
-        setTimeout(() => {
-          setIsLoggedIn(true);
-          showNotification('Login successful! Redirecting to dashboard...', 'success');
-        }, 1000);
       } else {
         showNotification(result.error || 'Login failed', 'error');
       }
       
     } catch (error) {
       showNotification('Invalid credentials. Please try again.', 'error');
+      console.error('Login error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -111,7 +91,7 @@ const LoginPage = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
+   
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -124,17 +104,11 @@ const LoginPage = () => {
   };
 
   const handleSignUp = () => {
-    navigate('/register');
+    navigate('/register', { state: { from: location.state?.from } });
   };
 
   const handleSocialLogin = (provider) => {
     showNotification(`${provider} login coming soon!`, 'success');
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setFormData({ email: '', password: '' });
-    showNotification('Logged out successfully!', 'success');
   };
 
   const Notification = () => {
@@ -157,52 +131,6 @@ const LoginPage = () => {
       </div>
     );
   };
-
-  // Show success page if logged in
-  if (isLoggedIn) {
-    return (
-      <div className="min-h-screen bg-slate-950 text-gray-100 flex items-center justify-center p-4 relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-purple-600/5 to-blue-600/5"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-slate-950 to-slate-950"></div>
-        
-        <Notification />
-        
-        <div className="w-full max-w-md relative z-10 text-center">
-          <div className="bg-slate-800/50 backdrop-blur-lg rounded-2xl shadow-2xl border border-slate-700/50 p-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-600 to-blue-600 rounded-full mb-6 shadow-2xl">
-              <CheckCircle className="w-8 h-8 text-white" />
-            </div>
-            
-            <h1 className="text-3xl font-bold text-white mb-2">
-              Welcome to{' '}
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Makeja
-              </span>
-            </h1>
-            
-            <p className="text-gray-400 mb-6">Login successful! You are now authenticated.</p>
-            
-            <div className="bg-slate-700/30 rounded-lg p-4 mb-6">
-              <p className="text-sm text-slate-300">
-                <strong>Email:</strong> {formData.email}
-              </p>
-              <p className="text-sm text-slate-300 mt-1">
-                <strong>Status:</strong> <span className="text-green-400">Authenticated</span>
-              </p>
-            </div>
-            
-            <button
-              onClick={handleLogout}
-              className="w-full bg-gradient-to-r from-red-600 to-pink-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-red-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-slate-800 transform hover:scale-105 transition-all duration-200 shadow-lg"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-gray-100 flex items-center justify-center p-4 relative overflow-hidden">
@@ -229,12 +157,9 @@ const LoginPage = () => {
           <p className="text-gray-400">Sign in to your account</p>
         </div>
 
-        {/* Login Instructions */}
-        {/* Removed test credentials section */}
-
         {/* Login Form */}
         <div className="bg-slate-800/50 backdrop-blur-lg rounded-2xl shadow-2xl border border-slate-700/50 p-8">
-          <div className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Field */}
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -319,7 +244,7 @@ const LoginPage = () => {
                 </>
               )}
             </button>
-          </div>
+          </form>
 
           {/* Divider */}
           <div className="mt-6 relative">

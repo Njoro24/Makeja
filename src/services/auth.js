@@ -1,7 +1,7 @@
 // Authentication service for handling user auth operations
 class AuthService {
   constructor() {
-    this.baseURL = 'http://localhost:3001/api';
+    this.baseURL = 'https://makejabe-2.onrender.com/api',
     this.token = this.getStoredToken();
   }
 
