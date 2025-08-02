@@ -7,20 +7,16 @@ import PaymentFailed from './components/payment/PaymentFailed';
 import EmailVerificationPage from './components/auth/EmailVerification';
 import HostelReviews from './components/hostel/HostelReviews';
 import './index.css';
-import './services/auth';
-
 
 // Pages
 import Home from './pages/Home';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MainLandingPage from './pages/MainLandingPage';
-import TestInput from './pages/TestInput';
 import HostelDetails from './components/hostel/HostelDetails';
-import MyBookingsPage from './pages/MyBookingsPage';
-import BookingPage from './pages/BookingPage';
-import HostRoomPage from './pages/HostRoomPage';
-import RoomDetailsPage from './pages/RoomDetailsPage'; 
+import ProfilePage from './pages/ProfilePage';
+import Dashboard from './pages/Dashboard';
+import Admpage from "./Admin/Admpage";
 
 function App() {
   return (
@@ -28,26 +24,17 @@ function App() {
       <Router>
         <div className="min-h-screen bg-slate-950">
           <Header />
+
           <main className="container mx-auto px-4 py-8">
             <Routes>
               <Route path="/" element={<MainLandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
-              <Route path="/booking/:id" element={<BookingPage />} />
-              <Route path="/test" element={<TestInput />} />
+           
               <Route path="/payment-failed" element={<PaymentFailed />} />
               <Route path="/verify-email" element={<EmailVerificationPage />} />
-              <Route path="/rooms/:id" element={<RoomDetailsPage />} /> {}
 
-              <Route
-                path="/home"
-                element={
-                  <ProtectedRoute>
-                    <Home />
-                  </ProtectedRoute>
-                }
-              />
-
+              
               <Route
                 path="/hostel/:id"
                 element={
@@ -57,29 +44,21 @@ function App() {
                 }
               />
 
+              {/* Optional: Standalone reviews route */}
               <Route
-                path="/bookings"
+                path="/hostel/:id/reviews"
                 element={
                   <ProtectedRoute>
-                    <MyBookingsPage />
+                    <HostelReviews hostelId={window.location.pathname.split('/')[2]} />
                   </ProtectedRoute>
                 }
               />
 
               <Route
-                path="/booking-page"
+                path="/home"
                 element={
                   <ProtectedRoute>
-                    <BookingPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/host-room"
-                element={
-                  <ProtectedRoute>
-                    <HostRoomPage />
+                    <Home />
                   </ProtectedRoute>
                 }
               />

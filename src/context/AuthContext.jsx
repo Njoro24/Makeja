@@ -102,36 +102,17 @@ const authReducer = (state, action) => {
   }
 };
 
-// Token verification helper
-const verifyToken = async (token) => {
-  // Bail out early if no token or bad format
-  if (!token || typeof token !== 'string' || token.split('.').length !== 3) {
-    console.warn('Skipping token verification: malformed or missing token.');
-    return false;
-  }
-
-  try {
-    const response = await fetch('http://localhost:5000/api/auth/verify', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-    
-    return response.ok;
-  } catch (error) {
-    console.error('Token verification failed:', error);
-    return false;
-  }
-};
-
 // AuthProvider component
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   useEffect(() => {
     checkAuthStatus();
+<<<<<<< HEAD
   }, []); // Empty dependency array prevents infinite calls
+=======
+  }, []); 
+>>>>>>> e3d630a (Accepted remote versions of key files)
 
   // Check if user is already authenticated
   const checkAuthStatus = async () => {
@@ -140,8 +121,12 @@ export const AuthProvider = ({ children }) => {
       const storedUser = localStorage.getItem('user');
 
       if (storedToken && storedUser) {
+<<<<<<< HEAD
         // FIXED: Skip token verification if API endpoint doesn't exist
         // For now, trust the stored token (you can implement proper verification later)
+=======
+        
+>>>>>>> e3d630a (Accepted remote versions of key files)
         try {
           const isTokenValid = await verifyToken(storedToken);
           
@@ -174,6 +159,11 @@ export const AuthProvider = ({ children }) => {
         dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: false });
       }
     } catch (error) {
+<<<<<<< HEAD
+=======
+      console.error('Auth check failed:', error);
+      // Clear any invalid stored data
+>>>>>>> e3d630a (Accepted remote versions of key files)
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: false });
@@ -185,7 +175,11 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: AUTH_ACTIONS.LOGIN_START });
 
     try {
+<<<<<<< HEAD
      const response = await fetch('http://localhost:5000/api/auth/login', {
+=======
+     const response = await fetch( 'https://makejabe-2.onrender.com/api/auth/login',{
+>>>>>>> e3d630a (Accepted remote versions of key files)
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -263,6 +257,10 @@ export const AuthProvider = ({ children }) => {
   // Logout function
   const logout = async () => {
     try {
+<<<<<<< HEAD
+=======
+      // Optional: Make API call to invalidate token on server
+>>>>>>> e3d630a (Accepted remote versions of key files)
       await fetch('https://makejabe-2.onrender.com/api/auth/logout', {
         method: 'POST',
         headers: {
@@ -272,6 +270,7 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       // Ignore logout API errors
     } finally {
+      // Remove stored auth data
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       dispatch({ type: AUTH_ACTIONS.LOGOUT });
@@ -298,7 +297,11 @@ export const AuthProvider = ({ children }) => {
   // FIXED: Verify token with backend - better error handling
   const verifyToken = async (token) => {
     try {
+<<<<<<< HEAD
       const response = await fetch('http://localhost:5000/api/auth/verify', {
+=======
+      const response = await fetch('https://makejabe-2.onrender.com/api/auth/verify-token', {
+>>>>>>> e3d630a (Accepted remote versions of key files)
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -309,7 +312,11 @@ export const AuthProvider = ({ children }) => {
       return response.ok;
     } catch (error) {
       console.error('Token verification failed:', error);
+<<<<<<< HEAD
       // If the API endpoint doesn't exist or network fails, return false
+=======
+   
+>>>>>>> e3d630a (Accepted remote versions of key files)
       return false;
     }
   };

@@ -1,215 +1,207 @@
-// auth.js - Comprehensive Authentication Service with Debugging
-
+// Authentication service for handling user auth operations
 class AuthService {
   constructor() {
-    this.baseURL = 'http://localhost:5000/api';
+    this.baseURL = 'https://makejabe-2.onrender.com/api',
     this.token = this.getStoredToken();
-    console.log('[AuthService] Initialized. Token exists:', !!this.token);
   }
 
-  // ==================== TOKEN MANAGEMENT ====================
+  // Get token from localStorage
   getStoredToken() {
-    const token = localStorage.getItem('authToken');
-    console.log('[AuthService] Retrieved token from localStorage:', token ? '***' + token.slice(-10) : 'NULL');
-    return token;
+    return localStorage.getItem('authToken');
   }
 
+  // Store token in localStorage
   setToken(token) {
-    console.groupCollapsed('[AuthService] Setting token');
-    console.log('Raw token received:', token);
-    console.log('Token type:', typeof token);
-    
-    if (!token) {
-      console.warn('Attempted to set empty token!');
-      console.groupEnd();
-      return;
-    }
-
     this.token = token;
     localStorage.setItem('authToken', token);
-    console.log('Token stored successfully. Length:', token.length);
-    console.log('Sample:', token.slice(0, 10) + '...' + token.slice(-10));
-    console.groupEnd();
-    return true;
   }
 
+  // Remove token from localStorage
   removeToken() {
-    console.log('[AuthService] Clearing token. Previous token existed:', !!this.token);
     this.token = null;
     localStorage.removeItem('authToken');
-    console.log('Token cleared successfully');
   }
 
-  // ==================== AUTH STATE ====================
+  // Check if user is authenticated
   isAuthenticated() {
-    const valid = !!this.token;
-    console.log(`[AuthService] Authentication check: ${valid ? 'VALID' : 'INVALID'}`);
-    return valid;
+    return !!this.token;
   }
 
+  // Get current user info from token
   getCurrentUser() {
-    if (!this.token) {
-      console.warn('[AuthService] No token available for user decoding');
-      return null;
-    }
+    if (!this.token) return null;
     
     try {
       const payload = JSON.parse(atob(this.token.split('.')[1]));
-      console.log('[AuthService] Decoded token payload:', payload);
       return payload;
     } catch (error) {
-      console.error('[AuthService] Token decoding failed:', error);
+      console.error('Invalid token format:', error);
       this.removeToken();
       return null;
     }
   }
 
-  // ==================== AUTH OPERATIONS ====================
+  // Login user
   async login(email, password) {
-    console.group('[AuthService] Login attempt for:', email);
     try {
       const response = await fetch(`${this.baseURL}/auth/login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ email, password }),
       });
 
-      const res = await response.json();
-      console.log('API Response:', res);
-
-      // Response validation
-      if (!res || typeof res !== 'object') {
-        throw new Error('Invalid response format');
-      }
+      const data = await response.json();
 
       if (!response.ok) {
-        console.error('Login failed:', res.message);
-        throw new Error(res.message || 'Login failed');
+        throw new Error(data.message || 'Login failed');
       }
 
-      const token = res.access_token;  // Corrected line
-      
-      if (!token) {
-        console.error('No token in response! Full response:', res);
-        throw new Error('Authentication token missing');
-      }
-
-      this.setToken(token);
-      console.log('Login successful. User:', res.user?.email);
-      return { success: true, user: res.user };
+      this.setToken(data.token);
+      return { success: true, user: data.user };
     } catch (error) {
       console.error('Login error:', error);
-      return { 
-        success: false, 
-        error: error.message,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
-      };
-    } finally {
-      console.groupEnd();
+      return { success: false, error: error.message };
     }
   }
 
+  // Register new user
   async register(userData) {
-    console.group('[AuthService] Registration attempt');
     try {
       const response = await fetch(`${this.baseURL}/auth/register`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(userData),
       });
 
-      const res = await response.json();
-      console.log('Registration response:', res);
-
-      // Response validation
-      if (!res || typeof res !== 'object') {
-        throw new Error('Invalid response format');
-      }
+      const data = await response.json();
 
       if (!response.ok) {
-        console.error('Registration failed:', res.errors);
-        throw new Error(res.message || 'Registration failed');
+        throw new Error(data.message || 'Registration failed');
       }
 
-      const token = res.access_token;  // Corrected line
-      this.setToken(token);
-      console.log('Registration successful');
-      return { success: true, user: res.user };
+      this.setToken(data.token);
+      return { success: true, user: data.user };
     } catch (error) {
       console.error('Registration error:', error);
       return { success: false, error: error.message };
-    } finally {
-      console.groupEnd();
     }
   }
 
+  // Logout user
   logout() {
-    console.log('[AuthService] Initiating logout');
     this.removeToken();
     return { success: true };
   }
 
-  // ==================== API COMMUNICATION ====================
+  // Get authorization headers for API calls
   getAuthHeaders() {
-    const headers = {
+    return {
+      'Authorization': `Bearer ${this.token}`,
       'Content-Type': 'application/json',
-      ...(this.token && { 'Authorization': `Bearer ${this.token}` })
     };
-    console.debug('Generated headers:', headers);
-    return headers;
   }
 
+  // Make authenticated API call
   async apiCall(endpoint, options = {}) {
-    console.group(`[AuthService] API call to ${endpoint}`);
-    try {
-      const response = await fetch(`${this.baseURL}${endpoint}`, {
-        ...options,
-        headers: this.getAuthHeaders(),
-      });
+    const url = `${this.baseURL}${endpoint}`;
+    const config = {
+      headers: this.getAuthHeaders(),
+      ...options,
+    };
 
-      console.log('API response status:', response.status);
+    try {
+      const response = await fetch(url, config);
       
       if (response.status === 401) {
-        console.warn('Authentication expired');
         this.logout();
-        window.location.reload(); // Force refresh to reset state
         throw new Error('Session expired');
       }
 
-      return await response.json();
+      return response;
     } catch (error) {
-      console.error('API call failed:', error);
+      console.error('API call error:', error);
       throw error;
-    } finally {
-      console.groupEnd();
     }
   }
 
-  // ==================== PASSWORD MANAGEMENT ====================
+  // Refresh token
+  async refreshToken() {
+    try {
+      const response = await fetch(`${this.baseURL}/auth/refresh`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Token refresh failed');
+      }
+
+      this.setToken(data.token);
+      return { success: true };
+    } catch (error) {
+      console.error('Token refresh error:', error);
+      this.logout();
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Forgot password
   async forgotPassword(email) {
-    console.log('[AuthService] Password reset request for:', email);
-    return this.apiCall('/auth/forgot-password', {
-      method: 'POST',
-      body: JSON.stringify({ email }),
-    });
+    try {
+      const response = await fetch(`${this.baseURL}/auth/forgot-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Password reset request failed');
+      }
+
+      return { success: true, message: data.message };
+    } catch (error) {
+      console.error('Forgot password error:', error);
+      return { success: false, error: error.message };
+    }
   }
 
+  // Reset password
   async resetPassword(token, newPassword) {
-    console.log('[AuthService] Attempting password reset');
-    return this.apiCall('/auth/reset-password', {
-      method: 'POST',
-      body: JSON.stringify({ token, password: newPassword }),
-    });
+    try {
+      const response = await fetch(`${this.baseURL}/auth/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token, password: newPassword }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Password reset failed');
+      }
+
+      return { success: true, message: data.message };
+    } catch (error) {
+      console.error('Reset password error:', error);
+      return { success: false, error: error.message };
+    }
   }
 }
 
-// Singleton instance
-const authService = new AuthService();
+// Create and export instance
+export const authService = new AuthService();
 
-// For testing/development only
-if (typeof window !== 'undefined') {
-  window.__authService = authService;
-  console.log('[AuthService] Debug instance available at window.__authService');
-}
-
-export { authService, AuthService };
+// Also export the class for testing purposes
+export { AuthService };
